@@ -2,6 +2,7 @@
 
 use std::error::Error;
 
+#[allow(dead_code)]
 pub fn part1() -> Result<(), Box<dyn Error>> {
     let input: &str = include_str!("../inputs/day01.in");
 
@@ -34,6 +35,7 @@ struct Window {
     c: u32,
 }
 
+#[allow(dead_code)]
 pub fn part2() -> Result<(), Box<dyn Error>> {
     let input: &str = include_str!("../inputs/day01.in");
 
