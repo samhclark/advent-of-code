@@ -4,8 +4,14 @@ use std::error::Error;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
-struct Command {
-    direction: String,
+enum Command {
+    Forward,
+    Down,
+    Up,
+}
+
+struct Instruction {
+    command: Command,
     magnitude: i64,
 }
 
@@ -20,73 +26,101 @@ struct LocationV2 {
     aim: i64,
 }
 
-impl FromStr for Command {
+impl FromStr for Instruction {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let split: Vec<&str> = s.split_ascii_whitespace().collect();
-        let dir = split[0];
-        let mag = split[1].parse::<i64>()?;
+        let (cmd, data) = s.split_once(' ').unwrap();
+        let command = match cmd.to_ascii_lowercase().as_str() {
+            "forward" => Command::Forward,
+            "down" => Command::Down,
+            "up" => Command::Up,
+            unknown => panic!("Unknown command {}", unknown),
+        };
+        let magnitude = data.parse::<i64>()?;
 
-        Ok(Command {
-            direction: dir.to_string(),
-            magnitude: mag,
-        })
+        Ok(Instruction { command, magnitude })
     }
 }
 
 #[allow(dead_code)]
-pub fn part1() -> Result<(), Box<dyn Error>> {
-    let input: Vec<Command> = include_str!("../inputs/day02.in")
+pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+    let input: Vec<Instruction> = puzzle_input
         .lines()
-        .map(|line| line.parse::<Command>().unwrap())
+        .map(|line| line.parse::<Instruction>().unwrap())
         .collect();
 
     let mut current_location = Location { x: 0, y: 0 };
-    for command in input {
-        if command.direction == "forward" {
-            current_location.x += command.magnitude;
-        } else if command.direction == "down" {
-            current_location.y += command.magnitude;
-        } else if command.direction == "up" {
-            current_location.y -= command.magnitude;
+    for instruction in input {
+        match instruction.command {
+            Command::Forward => current_location.x += instruction.magnitude,
+            Command::Down => current_location.y += instruction.magnitude,
+            Command::Up => current_location.y -= instruction.magnitude,
         }
     }
 
+    let puzzle_answer = current_location.x * current_location.y;
     println!(
         "Current location: ({}, {}) = {}",
-        current_location.x,
-        current_location.y,
-        (current_location.x * current_location.y)
+        current_location.x, current_location.y, puzzle_answer,
     );
 
-    Ok(())
+    Ok(puzzle_answer)
 }
 
 #[allow(dead_code)]
-pub fn part2() -> Result<(), Box<dyn Error>> {
-    let input: Vec<Command> = include_str!("../inputs/day02.in")
+pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+    let input: Vec<Instruction> = puzzle_input
         .lines()
-        .map(|line| line.parse::<Command>().unwrap())
+        .map(|line| line.parse::<Instruction>().unwrap())
         .collect();
 
     let mut current_location = LocationV2 { x: 0, y: 0, aim: 0 };
-    for command in input {
-        if command.direction == "forward" {
-            current_location.x += command.magnitude;
-            current_location.y += command.magnitude * current_location.aim;
-        } else if command.direction == "down" {
-            current_location.aim += command.magnitude;
-        } else if command.direction == "up" {
-            current_location.aim -= command.magnitude;
+    for instruction in input {
+        match instruction.command {
+            Command::Forward => {
+                current_location.x += instruction.magnitude;
+                current_location.y += instruction.magnitude * current_location.aim;
+            }
+            Command::Down => current_location.aim += instruction.magnitude,
+            Command::Up => current_location.aim -= instruction.magnitude,
         }
     }
 
+    let puzzle_answer = current_location.x * current_location.y;
     println!(
         "Current location: ({}, {}) = {}",
-        current_location.x,
-        current_location.y,
-        (current_location.x * current_location.y)
+        current_location.x, current_location.y, puzzle_answer,
     );
-    Ok(())
+
+    Ok(puzzle_answer)
+}
+
+#[cfg(test)]
+mod day02_tests {
+    use super::*;
+
+    #[test]
+    fn test_case_part_1() {
+        let input = "forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2";
+
+        assert_eq!(150, part1(input).unwrap());
+    }
+
+    #[test]
+    fn test_case_part_2() {
+        let input = "forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2";
+
+        assert_eq!(900, part2(input).unwrap());
+    }
 }
