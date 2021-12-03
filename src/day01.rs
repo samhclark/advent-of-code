@@ -3,8 +3,8 @@
 use std::error::Error;
 
 #[allow(dead_code)]
-pub fn part1() -> Result<(), Box<dyn Error>> {
-    let input: Vec<i64> = include_str!("../inputs/day01.in")
+pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
+    let input: Vec<i64> = puzzle_input
         .lines()
         .map(|line| line.parse().unwrap())
         .collect();
@@ -16,12 +16,12 @@ pub fn part1() -> Result<(), Box<dyn Error>> {
 
     println!("Total number of depth increases: {}", increases);
 
-    Ok(())
+    Ok(increases)
 }
 
 #[allow(dead_code)]
-pub fn part2() -> Result<(), Box<dyn Error>> {
-    let input: Vec<i64> = include_str!("../inputs/day01.in")
+pub fn part2(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
+    let input: Vec<i64> = puzzle_input
         .lines()
         .map(|line| line.parse().unwrap())
         .collect();
@@ -33,5 +33,40 @@ pub fn part2() -> Result<(), Box<dyn Error>> {
 
     println!("Total number of depth increases: {}", increases);
 
-    Ok(())
+    Ok(increases)
+}
+
+#[cfg(test)]
+mod day01_tests {
+    use super::*;
+
+    #[test]
+    fn test_case_part_1() {
+        let input = "199
+200
+208
+210
+200
+207
+240
+269
+260
+263";
+        assert_eq!(7, part1(input).unwrap());
+    }
+
+    #[test]
+    fn test_case_part_2() {
+        let input = "199
+200
+208
+210
+200
+207
+240
+269
+260
+263";
+        assert_eq!(5, part2(input).unwrap());
+    }
 }
