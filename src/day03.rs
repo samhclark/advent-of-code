@@ -2,13 +2,11 @@
 
 use std::error::Error;
 
-//0000 0100 0101
-
 #[allow(dead_code)]
-pub fn part1() -> Result<(), Box<dyn Error>> {
+pub fn part1(input: &str) -> Result<u64, Box<dyn Error>> {
     let mut sums: [i64; 12] = [0; 12];
 
-    include_str!("../inputs/day03.in").lines().for_each(|line| {
+    input.lines().for_each(|line| {
         line.chars().enumerate().for_each(|(i, c)| {
             if c == '1' {
                 sums[i] += 1
@@ -36,19 +34,17 @@ pub fn part1() -> Result<(), Box<dyn Error>> {
 
     let result = gamma_number * epsilon_number;
     println!("Result: {}", result);
-    Ok(())
+    Ok(result)
 }
 
 #[allow(dead_code)]
-pub fn part2() -> Result<(), Box<dyn Error>> {
-    let input = include_str!("../inputs/day03.in");
-
+pub fn part2(input: &str) -> Result<u64, Box<dyn Error>> {
     let oxygen_generator_rating: u64 = calculate_oxygen_generator_rating(&input)?;
     let co2_scrubber_rating: u64 = calculate_co2_scrubber_rating(&input)?;
 
-    let puzzle_result = oxygen_generator_rating * co2_scrubber_rating;
-    println!("Puzzle result: {}", puzzle_result);
-    Ok(())
+    let puzzle_answer = oxygen_generator_rating * co2_scrubber_rating;
+    println!("Puzzle result: {}", puzzle_answer);
+    Ok(puzzle_answer)
 }
 
 fn calculate_oxygen_generator_rating(input: &str) -> Result<u64, Box<dyn Error>> {
@@ -158,6 +154,25 @@ fn check_and_filter_c02_readings(
 mod day03_tests {
     use super::*;
 
+// Change the `part1` function to use 5 bits instead of 12 for this to pass
+//     #[test]
+//     fn test_case_part_1() {
+//         let input: &str = "00100
+// 11110
+// 10110
+// 10111
+// 10101
+// 01111
+// 00111
+// 11100
+// 10000
+// 11001
+// 00010
+// 01010";
+
+//         assert_eq!(198, part1(input).unwrap());
+//     }
+
     #[test]
     fn test_case_calculate_oxygen_generator_rating() {
         let input: &str = "00100
@@ -192,5 +207,23 @@ mod day03_tests {
 01010";
 
         assert_eq!(10, calculate_co2_scrubber_rating(input).unwrap());
+    }
+
+    #[test]
+    fn test_case_part_2() {
+        let input: &str = "00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010";
+
+        assert_eq!(230, part2(input).unwrap());
     }
 }
