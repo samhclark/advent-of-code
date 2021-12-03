@@ -1,7 +1,8 @@
 use std::error::Error;
 
 mod day01;
+mod day02;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    day01::part2()
+    day02::part2()
 }

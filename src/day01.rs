@@ -1,4 +1,4 @@
-// Day 01, part 1: Sonar Sweep
+// Day 1: Sonar Sweep
 
 use std::error::Error;
 
