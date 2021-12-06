@@ -20,32 +20,29 @@ struct Card {
 }
 
 impl Card {
+    /// Marks a number that has been called.
+    ///
+    /// Has the side effect of calculating `has_bingo` for the Card.
     fn mark(&mut self, number: u32) {
-        for (_i, row) in self.squares.iter_mut().enumerate() {
-            for (_j, square) in row.iter_mut().enumerate() {
+        'outer: for (i, row) in self.squares.iter_mut().enumerate() {
+            for (j, square) in row.iter_mut().enumerate() {
                 if square.number == number {
                     square.is_called = true;
+                    if (self.squares[i][0].is_called
+                        && self.squares[i][1].is_called
+                        && self.squares[i][2].is_called
+                        && self.squares[i][3].is_called
+                        && self.squares[i][4].is_called)
+                        || (self.squares[0][j].is_called
+                            && self.squares[1][j].is_called
+                            && self.squares[2][j].is_called
+                            && self.squares[3][j].is_called
+                            && self.squares[4][j].is_called)
+                    {
+                        self.has_bingo = true;
+                    }
+                    break 'outer;
                 }
-            }
-        }
-        for row in 0..5 {
-            if self.squares[row][0].is_called
-                && self.squares[row][1].is_called
-                && self.squares[row][2].is_called
-                && self.squares[row][3].is_called
-                && self.squares[row][4].is_called
-            {
-                self.has_bingo = true;
-            }
-        }
-        for col in 0..5 {
-            if self.squares[0][col].is_called
-                && self.squares[1][col].is_called
-                && self.squares[2][col].is_called
-                && self.squares[3][col].is_called
-                && self.squares[4][col].is_called
-            {
-                self.has_bingo = true;
             }
         }
     }
@@ -94,9 +91,6 @@ pub fn part1(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn E
         .map(|five_lines| five_lines.parse::<Card>().unwrap())
         .collect();
 
-    // println!("Parsed numbers: {:?}", numbers);
-    // println!("Boards: {:?}", boards);
-
     let mut winning_card: Option<Card> = None;
     let mut winning_number: Option<u32> = None;
     'outer: for number in numbers {
@@ -128,9 +122,6 @@ pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn E
         .map(|five_lines| five_lines.parse::<Card>().unwrap())
         .collect();
 
-    // println!("Parsed numbers: {:?}", numbers);
-    // println!("Boards: {:?}", boards);
-
     let mut last_card_to_win: Option<Card> = None;
     let mut last_number_to_produce_win: Option<u32> = None;
     for number in numbers {
@@ -141,12 +132,15 @@ pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn E
                     last_card_to_win = Some(*card);
                     last_number_to_produce_win = Some(number);
                 }
-            } 
+            }
         }
     }
 
     println!("Last winning card was: {:?}", last_card_to_win);
-    println!("Last number called to produce win was: {:?}", last_number_to_produce_win);
+    println!(
+        "Last number called to produce win was: {:?}",
+        last_number_to_produce_win
+    );
 
     let puzzle_answer = calculate_puzzle_answer(
         last_card_to_win.unwrap(),
