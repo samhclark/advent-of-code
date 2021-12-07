@@ -41,14 +41,13 @@ fn simulate_lanternfish_lifecycle(
     for fish in starting_fish {
         buckets_of_fish[fish] += 1;
     }
-
-    let mut b = buckets_of_fish; // rename to something smaller
+    
     for _ in 1..=days {
-        let new = [b[1], b[2], b[3], b[4], b[5], b[6], b[7] + b[0], b[8], b[0]];
-        b = new;
+        buckets_of_fish.rotate_left(1);
+        buckets_of_fish[6] += buckets_of_fish[8];
     }
 
-    Ok(b.iter().copied().sum())
+    Ok(buckets_of_fish.iter().copied().sum())
 }
 
 #[cfg(test)]
