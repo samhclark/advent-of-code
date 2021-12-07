@@ -41,7 +41,7 @@ fn simulate_lanternfish_lifecycle(
     for fish in starting_fish {
         buckets_of_fish[fish] += 1;
     }
-    
+
     for _ in 1..=days {
         buckets_of_fish.rotate_left(1);
         buckets_of_fish[6] += buckets_of_fish[8];
