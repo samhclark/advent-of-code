@@ -164,7 +164,7 @@ fn calculate_puzzle_answer(card: Card, number: u32) -> u64 {
 }
 
 #[cfg(test)]
-mod day03_tests {
+mod day04_tests {
     use super::*;
 
     #[test]
