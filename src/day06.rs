@@ -42,20 +42,13 @@ fn simulate_lanternfish_lifecycle(
         buckets_of_fish[fish] += 1;
     }
 
+    let mut b = buckets_of_fish; // rename to something smaller
     for _ in 1..=days {
-        let previous_bucket = buckets_of_fish.clone();
-        buckets_of_fish = [0; 9];
-        for (day_in_cycle, fish_count) in previous_bucket.iter().enumerate() {
-            if day_in_cycle == 0 {
-                buckets_of_fish[8] += fish_count;
-                buckets_of_fish[6] += fish_count;
-            } else {
-                buckets_of_fish[day_in_cycle - 1] += fish_count;
-            }
-        }
+        let new = [b[1], b[2], b[3], b[4], b[5], b[6], b[7] + b[0], b[8], b[0]];
+        b = new;
     }
 
-    Ok(buckets_of_fish.iter().copied().sum())
+    Ok(b.iter().copied().sum())
 }
 
 #[cfg(test)]
