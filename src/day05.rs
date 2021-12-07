@@ -56,11 +56,17 @@ impl Line {
         let y_step = (self.end.y as i64 - self.start.y as i64).signum();
 
         while (x, y) != (self.end.x as i64, self.end.y as i64) {
-            points.push(Point { x: x as usize, y: y as usize});
+            points.push(Point {
+                x: x as usize,
+                y: y as usize,
+            });
             x += x_step;
             y += y_step;
         }
-        points.push(Point { x: x as usize, y: y as usize});
+        points.push(Point {
+            x: x as usize,
+            y: y as usize,
+        });
 
         points
     }
