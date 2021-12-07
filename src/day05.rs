@@ -1,11 +1,6 @@
 // Day 5: Hydrothermal Venture
 
-use itertools::izip;
-use std::cmp::max;
-use std::cmp::min;
-use std::cmp::Ordering;
 use std::error::Error;
-use std::iter;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -54,27 +49,18 @@ impl Line {
     fn points(&self) -> Vec<Point> {
         let mut points: Vec<Point> = Vec::new();
 
-        let x_iter: Box<dyn Iterator<Item = usize>> = match self.start.x.cmp(&self.end.x) {
-            Ordering::Equal => {
-                let delta_y = max(self.start.y, self.end.y) - min(self.start.y, self.end.y) + 1;
-                Box::new(iter::repeat(self.start.x).take(delta_y))
-            }
-            Ordering::Greater => Box::new((self.end.x..=self.start.x).rev()),
-            Ordering::Less => Box::new(self.start.x..=self.end.x),
-        };
+        let mut x = self.start.x as i64;
+        let mut y = self.start.y as i64;
 
-        let y_iter: Box<dyn Iterator<Item = usize>> = match self.start.y.cmp(&self.end.y) {
-            Ordering::Equal => {
-                let delta_x = max(self.start.x, self.end.x) - min(self.start.x, self.end.x) + 1;
-                Box::new(iter::repeat(self.start.y).take(delta_x))
-            }
-            Ordering::Greater => Box::new((self.end.y..=self.start.y).rev()),
-            Ordering::Less => Box::new(self.start.y..=self.end.y),
-        };
+        let x_step = (self.end.x as i64 - self.start.x as i64).signum();
+        let y_step = (self.end.y as i64 - self.start.y as i64).signum();
 
-        for (x, y) in izip!(x_iter, y_iter) {
-            points.push(Point { x, y })
+        while (x, y) != (self.end.x as i64, self.end.y as i64) {
+            points.push(Point { x: x as usize, y: y as usize});
+            x += x_step;
+            y += y_step;
         }
+        points.push(Point { x: x as usize, y: y as usize});
 
         points
     }
