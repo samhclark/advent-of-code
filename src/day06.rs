@@ -1,13 +1,12 @@
 // Day 6: Lanternfish
 
-use std::collections::HashMap;
 use std::error::Error;
 
 #[allow(dead_code)]
 pub fn part1(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
     const DAYS: usize = 80;
 
-    let input_fish: Vec<u8> = puzzle_input
+    let input_fish: Vec<usize> = puzzle_input
         .split(',')
         .map(|s| s.parse().unwrap())
         .collect();
@@ -22,7 +21,7 @@ pub fn part1(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
 pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
     const DAYS: usize = 256;
 
-    let input_fish: Vec<u8> = puzzle_input
+    let input_fish: Vec<usize> = puzzle_input
         .split(',')
         .map(|s| s.parse().unwrap())
         .collect();
@@ -35,31 +34,28 @@ pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
 
 fn simulate_lanternfish_lifecycle(
     days: usize,
-    starting_fish: Vec<u8>,
+    starting_fish: Vec<usize>,
 ) -> Result<u128, Box<dyn Error>> {
-    let mut buckets_of_fish: HashMap<u8, u128> = HashMap::with_capacity(9);
+    let mut buckets_of_fish: [u128; 9] = [0; 9];
 
     for fish in starting_fish {
-        let fish_count = buckets_of_fish.entry(fish).or_insert(0);
-        *fish_count += 1;
+        buckets_of_fish[fish] += 1;
     }
 
     for _ in 1..=days {
         let previous_bucket = buckets_of_fish.clone();
-        buckets_of_fish.clear();
-        for (k, v) in previous_bucket {
-            if k == 0u8 {
-                buckets_of_fish.insert(8, v);
-                let parent_fish = buckets_of_fish.entry(6).or_insert(0);
-                *parent_fish += v;
+        buckets_of_fish = [0; 9];
+        for (day_in_cycle, fish_count) in previous_bucket.iter().enumerate() {
+            if day_in_cycle == 0 {
+                buckets_of_fish[8] += fish_count;
+                buckets_of_fish[6] += fish_count;
             } else {
-                let other_fish = buckets_of_fish.entry(k - 1).or_insert(0);
-                *other_fish += v;
+                buckets_of_fish[day_in_cycle - 1] += fish_count;
             }
         }
     }
 
-    Ok(buckets_of_fish.values().sum())
+    Ok(buckets_of_fish.iter().copied().sum())
 }
 
 #[cfg(test)]
