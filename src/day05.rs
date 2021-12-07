@@ -118,10 +118,9 @@ pub fn part2(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
     Ok(answer as u64)
 }
 
+#[cfg(test)]
 mod day05_tests {
 
-    // This isn't unused, idk why the compiler thinks it is
-    #[allow(unused_imports)] 
     use super::*;
 
     #[test]
