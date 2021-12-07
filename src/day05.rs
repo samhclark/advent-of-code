@@ -3,7 +3,9 @@
 use itertools::izip;
 use std::cmp::max;
 use std::cmp::min;
+use std::cmp::Ordering;
 use std::error::Error;
+use std::iter;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -51,38 +53,27 @@ impl FromStr for Line {
 impl Line {
     fn points(&self) -> Vec<Point> {
         let mut points: Vec<Point> = Vec::new();
-        if self.start.x == self.end.x {
-            let starting_y = min(self.start.y, self.end.y);
-            let ending_y = max(self.start.y, self.end.y);
-            for y in starting_y..=ending_y {
-                points.push(Point {
-                    x: self.start.x,
-                    y: y,
-                })
+
+        let x_iter: Box<dyn Iterator<Item = usize>> = match self.start.x.cmp(&self.end.x) {
+            Ordering::Equal => {
+                let delta_y = max(self.start.y, self.end.y) - min(self.start.y, self.end.y) + 1;
+                Box::new(iter::repeat(self.start.x).take(delta_y))
             }
-        } else if self.start.y == self.end.y {
-            let starting_x = min(self.start.x, self.end.x);
-            let ending_x = max(self.start.x, self.end.x);
-            for x in starting_x..=ending_x {
-                points.push(Point {
-                    x: x,
-                    y: self.start.y,
-                })
+            Ordering::Greater => Box::new((self.end.x..=self.start.x).rev()),
+            Ordering::Less => Box::new(self.start.x..=self.end.x),
+        };
+
+        let y_iter: Box<dyn Iterator<Item = usize>> = match self.start.y.cmp(&self.end.y) {
+            Ordering::Equal => {
+                let delta_x = max(self.start.x, self.end.x) - min(self.start.x, self.end.x) + 1;
+                Box::new(iter::repeat(self.start.y).take(delta_x))
             }
-        } else {
-            let x_iter: Box<dyn Iterator<Item = usize>> = if self.end.x > self.start.x {
-                Box::new(self.start.x..=self.end.x)
-            } else {
-                Box::new((self.end.x..=self.start.x).rev())
-            };
-            let y_iter: Box<dyn Iterator<Item = usize>> = if self.end.y > self.start.y {
-                Box::new(self.start.y..=self.end.y)
-            } else {
-                Box::new((self.end.y..=self.start.y).rev())
-            };
-            for (x, y) in izip!(x_iter, y_iter) {
-                points.push(Point { x, y })
-            }
+            Ordering::Greater => Box::new((self.end.y..=self.start.y).rev()),
+            Ordering::Less => Box::new(self.start.y..=self.end.y),
+        };
+
+        for (x, y) in izip!(x_iter, y_iter) {
+            points.push(Point { x, y })
         }
 
         points
@@ -106,17 +97,14 @@ pub fn part1(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
         }
     }
 
-    let mut num_overlaps = 0;
-    for i in 0..GRID_SIZE {
-        for j in 0..GRID_SIZE {
-            if grid[i][j] > 1 {
-                num_overlaps += 1;
-            }
-        }
-    }
+    let answer = grid
+        .into_iter()
+        .flat_map(|r| r.into_iter())
+        .filter(|&n| n > 1)
+        .count();
 
-    println!("Puzzle answer: {}", num_overlaps);
-    Ok(num_overlaps)
+    println!("Puzzle answer: {}", answer);
+    Ok(answer as u64)
 }
 
 #[allow(dead_code)]
@@ -134,20 +122,20 @@ pub fn part2(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
         }
     }
 
-    let mut num_overlaps = 0;
-    for i in 0..GRID_SIZE {
-        for j in 0..GRID_SIZE {
-            if grid[i][j] > 1 {
-                num_overlaps += 1;
-            }
-        }
-    }
+    let answer = grid
+        .into_iter()
+        .flat_map(|r| r.into_iter())
+        .filter(|&n| n > 1)
+        .count();
 
-    println!("Puzzle answer: {}", num_overlaps);
-    Ok(num_overlaps)
+    println!("Puzzle answer: {}", answer);
+    Ok(answer as u64)
 }
 
 mod day05_tests {
+
+    // This isn't unused, idk why the compiler thinks it is
+    #[allow(unused_imports)] 
     use super::*;
 
     #[test]
