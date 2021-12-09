@@ -25,7 +25,7 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
         .split(',')
         .map(|n| n.parse().unwrap())
         .collect();
-    
+
     // The minimum is one of the two numbers near the arithmetic mean. So, if the mean is 3.5, then
     // the most fuel efficient position is either 3 or 4, so we just check both.
     let discrete_mean = (positions.iter().sum::<i64>() as f64 / positions.len() as f64) as i64;
@@ -42,10 +42,10 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
         .iter()
         .map(|x: &i64| {
             let distance = (x - discrete_mean).abs();
-            distance * (distance + 1) / 2 
+            distance * (distance + 1) / 2
         })
         .sum();
-    
+
     // ...and choose whichever answer is smaller
     let puzzle_answer = min(spent_fuel_1, spent_fuel_2);
     println!("Puzzle answer: {}", puzzle_answer);
