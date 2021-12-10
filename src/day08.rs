@@ -13,7 +13,7 @@ pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
     let mut all_outputs: Vec<Vec<&str>> = vec![vec![]];
 
     for line in puzzle_input.lines() {
-        let mut split = line.split('|');
+        let mut split = line.trim().split('|');
         let one_pattern: Vec<&str> = split
             .next()
             .unwrap()
@@ -45,37 +45,38 @@ pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
 
 #[allow(dead_code)]
 pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
-    let mut all_readings: Vec<Reading> = vec![];
-
-    for line in puzzle_input.lines() {
-        let mut split = line.split('|');
-        let one_pattern: Vec<String> = split
-            .next()
-            .unwrap()
-            .trim()
-            .split_ascii_whitespace()
-            .map(|s| {
-                let mut chars = s.chars().collect::<Vec<char>>();
-                chars.sort_unstable();
-                String::from_iter(chars)
-            })
-            .collect();
-        let one_output: Vec<String> = split
-            .next()
-            .unwrap()
-            .trim()
-            .split_ascii_whitespace()
-            .map(|s| {
-                let mut chars = s.chars().collect::<Vec<char>>();
-                chars.sort_unstable();
-                String::from_iter(chars)
-            })
-            .collect();
-        all_readings.push(Reading {
-            patterns: one_pattern,
-            display: one_output,
-        });
-    }
+    let all_readings: Vec<Reading> = puzzle_input
+        .lines()
+        .map(|line| {
+            let mut split = line.split('|');
+            let one_pattern: Vec<String> = split
+                .next()
+                .unwrap()
+                .trim()
+                .split_ascii_whitespace()
+                .map(|s| {
+                    let mut chars = s.chars().collect::<Vec<char>>();
+                    chars.sort_unstable();
+                    String::from_iter(chars)
+                })
+                .collect();
+            let one_output: Vec<String> = split
+                .next()
+                .unwrap()
+                .trim()
+                .split_ascii_whitespace()
+                .map(|s| {
+                    let mut chars = s.chars().collect::<Vec<char>>();
+                    chars.sort_unstable();
+                    String::from_iter(chars)
+                })
+                .collect();
+            Reading {
+                patterns: one_pattern,
+                display: one_output,
+            }
+        })
+        .collect();
 
     let puzzle_answer: i64 = all_readings.iter().map(calculate_output).sum();
     println!("Puzzle answer: {}", puzzle_answer);
@@ -86,7 +87,7 @@ fn calculate_output(reading: &Reading) -> i64 {
     // We need the patterns of four and seven to figure out all the others
     let segments_of_four = &reading.patterns.iter().find(|p| p.len() == 4).unwrap();
     let segments_of_seven = &reading.patterns.iter().find(|p| p.len() == 3).unwrap();
-    
+
     let mut pattern_for_digit: Vec<String> = vec!["".to_string(); 10];
     for this_pattern in &reading.patterns {
         match (
@@ -105,13 +106,14 @@ fn calculate_output(reading: &Reading) -> i64 {
             (7, 4, 3) => pattern_for_digit[8] = this_pattern.to_string(),
             (6, 4, 3) => pattern_for_digit[9] = this_pattern.to_string(),
             (_, _, _) => unreachable!(),
-        }
+        };
     }
 
     let mut output: String = "".to_string();
     for digit in &reading.display {
         'inner: for (i, mapping) in pattern_for_digit.iter().enumerate() {
-            if digit == mapping {
+            if digit == mapping { // This comparison only works because we sorted all the characters
+                // We know they are all single digits
                 output.push(i.to_string().chars().next().unwrap());
                 break 'inner;
             }
