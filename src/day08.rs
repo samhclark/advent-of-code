@@ -8,36 +8,23 @@ struct Reading {
 }
 
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
-    let mut all_patterns: Vec<Vec<&str>> = vec![vec![]];
-    let mut all_outputs: Vec<Vec<&str>> = vec![vec![]];
+pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
 
-    for line in puzzle_input.lines() {
-        let mut split = line.trim().split('|');
-        let one_pattern: Vec<&str> = split
-            .next()
-            .unwrap()
-            .trim()
-            .split_ascii_whitespace()
-            .collect();
-        let one_output: Vec<&str> = split
-            .next()
-            .unwrap()
-            .trim()
-            .split_ascii_whitespace()
-            .collect();
-        all_patterns.push(one_pattern);
-        all_outputs.push(one_output);
-    }
-
-    let mut puzzle_answer: i64 = 0;
-    for output in all_outputs {
-        for digit in output {
-            if digit.len() == 2 || digit.len() == 3 || digit.len() == 4 || digit.len() == 7 {
-                puzzle_answer += 1;
-            }
-        }
-    }
+    let puzzle_answer: usize = puzzle_input
+        .lines()
+        .flat_map(|line| -> Vec<&str> {
+            let mut split = line.trim().split('|');
+            split
+                .nth(1)
+                .unwrap()
+                .trim()
+                .split_ascii_whitespace()
+                .collect()
+        })
+        .filter(|digit| {
+            digit.len() == 2 || digit.len() == 3 || digit.len() == 4 || digit.len() == 7
+        })
+        .count();
 
     println!("Puzzle answer: {}", puzzle_answer);
     Ok(puzzle_answer)
@@ -112,7 +99,8 @@ fn calculate_output(reading: &Reading) -> i64 {
     let mut output: String = "".to_string();
     for digit in &reading.display {
         'inner: for (i, mapping) in pattern_for_digit.iter().enumerate() {
-            if digit == mapping { // This comparison only works because we sorted all the characters
+            if digit == mapping {
+                // This comparison only works because we sorted all the characters
                 // We know they are all single digits
                 output.push(i.to_string().chars().next().unwrap());
                 break 'inner;
