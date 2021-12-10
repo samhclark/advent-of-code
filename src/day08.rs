@@ -9,7 +9,6 @@ struct Reading {
 
 #[allow(dead_code)]
 pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
-
     let puzzle_answer: usize = puzzle_input
         .lines()
         .flat_map(|line| -> Vec<&str> {
@@ -41,22 +40,14 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
                 .unwrap()
                 .trim()
                 .split_ascii_whitespace()
-                .map(|s| {
-                    let mut chars = s.chars().collect::<Vec<char>>();
-                    chars.sort_unstable();
-                    String::from_iter(chars)
-                })
+                .map(|s| s.to_owned())
                 .collect();
             let one_output: Vec<String> = split
                 .next()
                 .unwrap()
                 .trim()
                 .split_ascii_whitespace()
-                .map(|s| {
-                    let mut chars = s.chars().collect::<Vec<char>>();
-                    chars.sort_unstable();
-                    String::from_iter(chars)
-                })
+                .map(|s| s.to_owned())
                 .collect();
             Reading {
                 patterns: one_pattern,
@@ -75,38 +66,30 @@ fn calculate_output(reading: &Reading) -> i64 {
     let segments_of_four = &reading.patterns.iter().find(|p| p.len() == 4).unwrap();
     let segments_of_seven = &reading.patterns.iter().find(|p| p.len() == 3).unwrap();
 
-    let mut pattern_for_digit: Vec<String> = vec!["".to_string(); 10];
-    for this_pattern in &reading.patterns {
-        match (
-            this_pattern.len(),
-            number_of_common_segments(this_pattern, segments_of_four),
-            number_of_common_segments(this_pattern, segments_of_seven),
-        ) {
-            (6, 3, 3) => pattern_for_digit[0] = this_pattern.to_string(),
-            (2, 2, 2) => pattern_for_digit[1] = this_pattern.to_string(),
-            (5, 2, 2) => pattern_for_digit[2] = this_pattern.to_string(),
-            (5, 3, 3) => pattern_for_digit[3] = this_pattern.to_string(),
-            (4, 4, 2) => pattern_for_digit[4] = this_pattern.to_string(),
-            (5, 3, 2) => pattern_for_digit[5] = this_pattern.to_string(),
-            (6, 3, 2) => pattern_for_digit[6] = this_pattern.to_string(),
-            (3, 2, 3) => pattern_for_digit[7] = this_pattern.to_string(),
-            (7, 4, 3) => pattern_for_digit[8] = this_pattern.to_string(),
-            (6, 4, 3) => pattern_for_digit[9] = this_pattern.to_string(),
-            (_, _, _) => unreachable!(),
-        };
-    }
-
-    let mut output: String = "".to_string();
-    for digit in &reading.display {
-        'inner: for (i, mapping) in pattern_for_digit.iter().enumerate() {
-            if digit == mapping {
-                // This comparison only works because we sorted all the characters
-                // We know they are all single digits
-                output.push(i.to_string().chars().next().unwrap());
-                break 'inner;
+    let output: &str = &reading
+        .display
+        .iter()
+        .map(|digit| -> char {
+            match (
+                digit.len(),
+                number_of_common_segments(digit, segments_of_four),
+                number_of_common_segments(digit, segments_of_seven),
+            ) {
+                (6, 3, 3) => '0',
+                (2, 2, 2) => '1',
+                (5, 2, 2) => '2',
+                (5, 3, 3) => '3',
+                (4, 4, 2) => '4',
+                (5, 3, 2) => '5',
+                (6, 3, 2) => '6',
+                (3, 2, 3) => '7',
+                (7, 4, 3) => '8',
+                (6, 4, 3) => '9',
+                (_, _, _) => unreachable!(),
             }
-        }
-    }
+        })
+        .collect::<String>();
+
     output.parse::<i64>().unwrap()
 }
 

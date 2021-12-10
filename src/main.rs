@@ -11,6 +11,6 @@ mod day08;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let puzzle_input = include_str!("../inputs/day08.in");
-    day08::part1(puzzle_input.trim())?;
+    day08::part2(puzzle_input.trim())?;
     Ok(())
 }
