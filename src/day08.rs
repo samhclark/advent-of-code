@@ -83,52 +83,34 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
 }
 
 fn calculate_output(reading: &Reading) -> i64 {
-    let mut these_chars: Vec<String> = vec!["".to_string(); 10];
-    for pattern in &reading.patterns {
-        if pattern.len() == 2 {
-            these_chars[1] = pattern.to_string();
-        } else if pattern.len() == 3 {
-            these_chars[7] = pattern.to_string();
-        } else if pattern.len() == 4 {
-            these_chars[4] = pattern.to_string();
-        } else if pattern.len() == 7 {
-            these_chars[8] = pattern.to_string();
+    // We need the patterns of four and seven to figure out all the others
+    let segments_of_four = &reading.patterns.iter().find(|p| p.len() == 4).unwrap();
+    let segments_of_seven = &reading.patterns.iter().find(|p| p.len() == 3).unwrap();
+    
+    let mut pattern_for_digit: Vec<String> = vec!["".to_string(); 10];
+    for this_pattern in &reading.patterns {
+        match (
+            this_pattern.len(),
+            number_of_common_segments(this_pattern, segments_of_four),
+            number_of_common_segments(this_pattern, segments_of_seven),
+        ) {
+            (6, 3, 3) => pattern_for_digit[0] = this_pattern.to_string(),
+            (2, 2, 2) => pattern_for_digit[1] = this_pattern.to_string(),
+            (5, 2, 2) => pattern_for_digit[2] = this_pattern.to_string(),
+            (5, 3, 3) => pattern_for_digit[3] = this_pattern.to_string(),
+            (4, 4, 2) => pattern_for_digit[4] = this_pattern.to_string(),
+            (5, 3, 2) => pattern_for_digit[5] = this_pattern.to_string(),
+            (6, 3, 2) => pattern_for_digit[6] = this_pattern.to_string(),
+            (3, 2, 3) => pattern_for_digit[7] = this_pattern.to_string(),
+            (7, 4, 3) => pattern_for_digit[8] = this_pattern.to_string(),
+            (6, 4, 3) => pattern_for_digit[9] = this_pattern.to_string(),
+            (_, _, _) => unreachable!(),
         }
     }
-    // We know the patterns of 1, 4, 7, and 8
-
-    for pattern in &reading.patterns {
-        if pattern.len() == 5 {
-            if contains_all_chars(pattern, &these_chars[7]) {
-                these_chars[3] = pattern.to_string();
-            } else {
-                let in_common_with_four = number_of_common_segments(pattern, &these_chars[4]);
-                if in_common_with_four == 2 {
-                    these_chars[2] = pattern.to_string();
-                } else if in_common_with_four == 3 {
-                    these_chars[5] = pattern.to_string();
-                }
-            }
-        } else if pattern.len() == 6 {
-            if contains_all_chars(pattern, &these_chars[7])
-                && contains_all_chars(pattern, &these_chars[4])
-            {
-                these_chars[9] = pattern.to_string();
-            } else {
-                let in_common_with_seven = number_of_common_segments(pattern, &these_chars[7]);
-                if in_common_with_seven == 2 {
-                    these_chars[6] = pattern.to_string();
-                } else if in_common_with_seven == 3 {
-                    these_chars[0] = pattern.to_string();
-                }
-            }
-        }
-    }
-    // We know all the patterns
 
     let mut output: String = "".to_string();
     for digit in &reading.display {
-        'inner: for (i, mapping) in these_chars.iter().enumerate() {
+        'inner: for (i, mapping) in pattern_for_digit.iter().enumerate() {
             if digit == mapping {
                 output.push(i.to_string().chars().next().unwrap());
                 break 'inner;
@@ -138,16 +120,9 @@ fn calculate_output(reading: &Reading) -> i64 {
     output.parse::<i64>().unwrap()
 }
 
-fn contains_all_chars(a: &str, b: &str) -> bool {
-    let chars: Vec<char> = b.chars().collect();
-    chars.iter().all(|c| a.contains(*c))
-}
-
 fn number_of_common_segments(pattern: &str, segments: &str) -> usize {
     let chars: Vec<char> = segments.chars().collect();
-
     let in_common = chars.iter().filter(|c| pattern.contains(**c)).count();
-    println!("in common: {}", in_common);
     in_common
 }
 
