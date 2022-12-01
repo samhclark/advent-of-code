@@ -145,22 +145,22 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
                 let c = stack.pop().unwrap();
                 match c {
                     '(' => {
-                        this_score = this_score * 5;
+                        this_score *= 5;
                         this_score += 1;
-                    },
+                    }
                     '[' => {
-                        this_score = this_score * 5;
+                        this_score *= 5;
                         this_score += 2;
-                    },
+                    }
                     '{' => {
-                        this_score = this_score * 5;
+                        this_score *= 5;
                         this_score += 3;
-                    },
+                    }
                     '<' => {
-                        this_score = this_score * 5;
+                        this_score *= 5;
                         this_score += 4;
-                    },
-                    _ => unreachable!()
+                    }
+                    _ => unreachable!(),
                 }
             }
             scores.push(this_score);
