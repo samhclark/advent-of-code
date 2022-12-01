@@ -27,7 +27,7 @@ fn make_cave_system(input: &str) -> CaveSystem {
         node_id.insert(end);
     }
 
-    node_id.
+    // node_id.
 
     for line in input.lines() {
         let (start, end) = line.split_once('-').unwrap();
