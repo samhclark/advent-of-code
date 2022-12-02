@@ -1,20 +1,18 @@
 // Day 2: Rock Paper Scissors
 
-use itertools::Itertools;
-
 static INPUT: &str = include_str!("../../inputs/2022/day02.in");
 
 #[allow(dead_code)]
 pub fn part01() {
-    println!("Answer is: {}", calc_score_for_strategy(INPUT));
+    println!("Answer is: {}", do_part1(INPUT));
 }
 
 #[allow(dead_code)]
 pub fn part02() {
-    println!("Answer is: {}", todo!());
+    println!("Answer is: {}", do_part2(INPUT));
 }
 
-fn calc_score_for_strategy(strategy: &str) -> u64 {
+fn do_part1(strategy: &str) -> u64 {
     let mut total_score: u64 = 0;
     for round in strategy.lines() {
         let (theirs, mine) = round.split_once(' ').unwrap();
@@ -40,6 +38,43 @@ fn calc_score_for_strategy(strategy: &str) -> u64 {
     total_score
 }
 
+fn do_part2(strategy: &str) -> u64 {
+    let mut total_score: u64 = 0;
+    for round in strategy.lines() {
+        let (theirs, result) = round.split_once(' ').unwrap();
+        println!("New round: theirs: {}, result: {}", theirs, result);
+        let theirs = theirs.chars().nth(0).unwrap() as u8;
+        let result = result.chars().nth(0).unwrap() as u8;
+        let theirs = theirs - b'A' + 1;
+        let result = result - b'X';
+        println!("as bytes: theirs: {}, result: {}", theirs, result);
+
+        if result == 1 {
+            total_score += theirs as u64;
+        } else if result == 0 { // have to lose
+            if theirs == 1 {
+                total_score += 3
+            } else if (theirs == 2) {
+                total_score += 1;
+            } else {
+                total_score += 2;
+            }
+        } else { // have to win
+            if theirs == 1 {
+                total_score += 2
+            } else if (theirs == 2) {
+                total_score += 3;
+            } else {
+                total_score += 1;
+            }
+        }
+        total_score += (result * 3) as u64;
+    }
+    
+    total_score
+}
+
+
 #[cfg(test)]
 mod test {
 
@@ -50,12 +85,14 @@ mod test {
         let input = "A Y
 B X
 C Z\n";
-        assert_eq!(calc_score_for_strategy(input), 15);
+        assert_eq!(do_part1(input), 15);
     }
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
-        assert_eq!(true, true);
+        let input = "A Y
+B X
+C Z\n";
+        assert_eq!(do_part2(input), 12);
     }
 }
