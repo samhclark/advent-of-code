@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 static Y2022_DAY01_INPUT: &str = include_str!("../../inputs/2022/day01.in");
 
 #[allow(dead_code)]
@@ -12,20 +14,15 @@ pub fn part02() {
 
 fn cals_of_top_n_elves(input: &str, n: usize) -> u64 {
     let mut elf_cals: Vec<u64> = vec![];
-    let mut current_elf_cals: u64 = 0;
-    for line in input.lines() {
-        if line.is_empty() {
-            elf_cals.push(current_elf_cals);
-            current_elf_cals = 0;
-        } else {
-            current_elf_cals += line.parse::<u64>().unwrap();
+    let mut current_elf_cals: u64;
+    for elf in input.split("\n\n") {
+        current_elf_cals = 0;
+        for food in elf.lines() {
+            current_elf_cals += food.parse::<u64>().unwrap();
         }
+        elf_cals.push(current_elf_cals);
     }
-    elf_cals.push(current_elf_cals);
-
-    elf_cals.sort_unstable();
-    let top_n_elves = elf_cals.drain((elf_cals.len() - n)..);
-    top_n_elves.sum()
+    elf_cals.iter().sorted().rev().take(n).sum::<u64>()
 }
 
 #[cfg(test)]
