@@ -4,12 +4,18 @@ static Y2022_DAY01_INPUT: &str = include_str!("../../inputs/2022/day01.in");
 
 #[allow(dead_code)]
 pub fn part01() {
-    println!("Answer is: {}", cals_of_top_n_elves(Y2022_DAY01_INPUT, 1));
+    println!(
+        "[AOC 2022, Day 1, Part 1] Answer is: {}",
+        cals_of_top_n_elves(Y2022_DAY01_INPUT, 1)
+    );
 }
 
 #[allow(dead_code)]
 pub fn part02() {
-    println!("Answer is: {}", cals_of_top_n_elves(Y2022_DAY01_INPUT, 3));
+    println!(
+        "[AOC 2022, Day 1, Part 2] Answer is: {}",
+        cals_of_top_n_elves(Y2022_DAY01_INPUT, 3)
+    );
 }
 
 fn cals_of_top_n_elves(input: &str, n: usize) -> u64 {
