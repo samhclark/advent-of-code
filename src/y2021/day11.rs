@@ -1,15 +1,13 @@
 // Day 11: Dumbo Octopus
 
-use std::error::Error;
-
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> i64 {
     let mut octopus_grid: [[u32; 10]; 10] = make_octopus_grid(puzzle_input);
 
     let puzzle_answer: i64 = (0..100).map(|_| step(&mut octopus_grid)).sum();
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 fn make_octopus_grid(input: &str) -> [[u32; 10]; 10] {
@@ -97,7 +95,7 @@ fn step(grid: &mut [[u32; 10]; 10]) -> i64 {
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> i64 {
     let mut octopus_grid: [[u32; 10]; 10] = make_octopus_grid(puzzle_input);
 
     let mut step_number = 1;
@@ -106,7 +104,7 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
     }
     let puzzle_answer: i64 = step_number;
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[cfg(test)]
@@ -127,7 +125,7 @@ mod day11_tests {
 4846848554
 5283751526\n";
 
-        assert_eq!(1656, part1(input).unwrap())
+        assert_eq!(1656, part1(input))
     }
 
     #[test]
@@ -143,6 +141,6 @@ mod day11_tests {
 4846848554
 5283751526\n";
 
-        assert_eq!(195, part2(input).unwrap())
+        assert_eq!(195, part2(input))
     }
 }

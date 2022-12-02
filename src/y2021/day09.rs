@@ -1,19 +1,19 @@
 // Day 9: Smoke Basin
 
-use std::{collections::HashSet, error::Error};
+use std::collections::HashSet;
 
 type Point = (usize, usize);
 type Heightmap = Vec<Vec<u32>>;
 
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<u32, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> u32 {
     let heightmap: Heightmap = build_heightmap_from_input(puzzle_input);
 
     let lowpoints: Vec<Point> = get_low_points_from_heightmap(&heightmap);
 
     let puzzle_answer: u32 = determine_risk_level(&heightmap, &lowpoints);
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 fn build_heightmap_from_input(input: &str) -> Heightmap {
@@ -37,7 +37,7 @@ fn get_low_points_from_heightmap(heightmap: &[Vec<u32>]) -> Vec<Point> {
     for (i, row) in heightmap.iter().enumerate() {
         for (j, height) in (*row).iter().enumerate() {
             if i > 0 {
-                let up = heightmap.get(i - 1).map(|r| r.get(j)).flatten();
+                let up = heightmap.get(i - 1).and_then(|r| r.get(j));
                 if let Some(up) = up {
                     if up <= height {
                         continue;
@@ -46,7 +46,7 @@ fn get_low_points_from_heightmap(heightmap: &[Vec<u32>]) -> Vec<Point> {
             }
 
             if j > 0 {
-                let left = heightmap.get(i).map(|r| r.get(j - 1)).flatten();
+                let left = heightmap.get(i).and_then(|r| r.get(j - 1));
                 if let Some(left) = left {
                     if left <= height {
                         continue;
@@ -54,14 +54,14 @@ fn get_low_points_from_heightmap(heightmap: &[Vec<u32>]) -> Vec<Point> {
                 }
             }
 
-            let down = heightmap.get(i + 1).map(|r| r.get(j)).flatten();
+            let down = heightmap.get(i + 1).and_then(|r| r.get(j));
             if let Some(down) = down {
                 if down <= height {
                     continue;
                 }
             }
 
-            let right = heightmap.get(i).map(|r| r.get(j + 1)).flatten();
+            let right = heightmap.get(i).and_then(|r| r.get(j + 1));
             if let Some(right) = right {
                 if right <= height {
                     continue;
@@ -79,7 +79,7 @@ fn determine_risk_level(heightmap: &[Vec<u32>], lowpoints: &[Point]) -> u32 {
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> u128 {
     let heightmap: Heightmap = build_heightmap_from_input(puzzle_input);
 
     let lowpoints: Vec<Point> = get_low_points_from_heightmap(&heightmap);
@@ -87,9 +87,9 @@ pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
     let largest_basins: (u32, u32, u32) = find_largest_basins(&heightmap, &lowpoints);
 
     let puzzle_answer: u128 =
-        largest_basins.0 as u128 * largest_basins.1 as u128 * largest_basins.2 as u128;
+        u128::from(largest_basins.0) * u128::from(largest_basins.1) * u128::from(largest_basins.2);
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 fn find_largest_basins(heightmap: &[Vec<u32>], lowpoints: &[Point]) -> (u32, u32, u32) {
@@ -107,7 +107,7 @@ fn find_largest_basins(heightmap: &[Vec<u32>], lowpoints: &[Point]) -> (u32, u32
                 continue;
             }
             // Skip if out of bounds (I really want to unwrap_or_continue here)
-            let maybe_height = heightmap.get(current.0).map(|r| r.get(current.1)).flatten();
+            let maybe_height = heightmap.get(current.0).and_then(|r| r.get(current.1));
             let current_height: u32 = match maybe_height {
                 Some(x) => *x,
                 None => continue,
@@ -171,7 +171,7 @@ mod day09_tests {
 8767896789
 9899965678\n";
 
-        assert_eq!(15, part1(input).unwrap())
+        assert_eq!(15, part1(input))
     }
 
     #[test]
@@ -182,6 +182,6 @@ mod day09_tests {
 8767896789
 9899965678\n";
 
-        assert_eq!(1134, part2(input).unwrap())
+        assert_eq!(1134, part2(input))
     }
 }

@@ -1,6 +1,5 @@
 // Day 2: Dive!
 
-use std::error::Error;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -39,12 +38,12 @@ impl FromStr for Instruction {
         };
         let magnitude = data.parse::<i64>()?;
 
-        Ok(Instruction { command, magnitude })
+        Ok(Self { command, magnitude })
     }
 }
 
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> i64 {
     let input: Vec<Instruction> = puzzle_input
         .lines()
         .map(|line| line.parse::<Instruction>().unwrap())
@@ -65,11 +64,11 @@ pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
         current_location.x, current_location.y, puzzle_answer,
     );
 
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> i64 {
     let input: Vec<Instruction> = puzzle_input
         .lines()
         .map(|line| line.parse::<Instruction>().unwrap())
@@ -93,7 +92,7 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
         current_location.x, current_location.y, puzzle_answer,
     );
 
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[cfg(test)]
@@ -109,7 +108,7 @@ up 3
 down 8
 forward 2";
 
-        assert_eq!(150, part1(input).unwrap());
+        assert_eq!(150, part1(input));
     }
 
     #[test]
@@ -121,6 +120,6 @@ up 3
 down 8
 forward 2";
 
-        assert_eq!(900, part2(input).unwrap());
+        assert_eq!(900, part2(input));
     }
 }

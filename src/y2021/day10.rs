@@ -1,19 +1,14 @@
 // Day 10: Syntax Scoring
 
-use std::error::Error;
-
-#[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+#[allow(dead_code, clippy::redundant_else)]
+pub fn part1(puzzle_input: &str) -> i64 {
     let mut scores: Vec<i64> = vec![];
 
     for chunk in puzzle_input.lines() {
         let mut stack: Vec<char> = vec![];
         'inner: for c in chunk.chars() {
             match c {
-                '(' => stack.push(c),
-                '{' => stack.push(c),
-                '[' => stack.push(c),
-                '<' => stack.push(c),
+                '(' | '{' | '[' | '<' => stack.push(c),
                 ')' => {
                     if let Some(opening) = stack.pop() {
                         if opening == '(' {
@@ -69,21 +64,18 @@ pub fn part1(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
 
     let puzzle_answer: i64 = scores.iter().sum();
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
-#[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+#[allow(dead_code, clippy::redundant_else)]
+pub fn part2(puzzle_input: &str) -> i64 {
     let mut scores: Vec<i64> = vec![];
 
     for chunk in puzzle_input.lines() {
         let mut stack: Vec<char> = vec![];
         'inner: for c in chunk.chars() {
             match c {
-                '(' => stack.push(c),
-                '{' => stack.push(c),
-                '[' => stack.push(c),
-                '<' => stack.push(c),
+                '(' | '{' | '[' | '<' => stack.push(c),
                 ')' => {
                     if let Some(opening) = stack.pop() {
                         if opening == '(' {
@@ -171,7 +163,7 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
 
     let puzzle_answer: i64 = scores.get(scores.len() / 2).unwrap().to_owned();
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[cfg(test)]
@@ -192,7 +184,7 @@ mod day10_tests {
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]\n";
 
-        assert_eq!(26397, part1(input).unwrap())
+        assert_eq!(26397, part1(input))
     }
 
     #[test]
@@ -208,6 +200,6 @@ mod day10_tests {
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]\n";
 
-        assert_eq!(288957, part2(input).unwrap())
+        assert_eq!(288957, part2(input))
     }
 }

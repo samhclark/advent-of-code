@@ -13,7 +13,7 @@ pub fn part1(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
             if c == '1' {
                 number_of_ones_by_bit[i] += 1;
             }
-        })
+        });
     });
 
     let mut gamma: String = String::with_capacity(NUMBER_OF_BITS);
@@ -48,12 +48,12 @@ pub fn part2(input: &str) -> Result<u64, Box<dyn Error>> {
 
 fn calculate_oxygen_generator_rating(input: &str) -> Result<u64, Box<dyn Error>> {
     println!("{:?}", input);
-    let input_vec: Vec<String> = input.lines().map(|s| s.to_string()).collect();
+    let input_vec: Vec<String> = input.lines().map(String::from).collect();
 
     let mut result: u64 = 1;
     let mut filtered = input_vec;
     for i in 0..12 {
-        filtered = check_and_filter_oxygen_readings(&filtered, i)?;
+        filtered = check_and_filter_oxygen_readings(&filtered, i);
         if filtered.len() == 1 {
             let result_string = filtered.get(0).unwrap();
             result = u64::from_str_radix(result_string, 2)?;
@@ -64,19 +64,16 @@ fn calculate_oxygen_generator_rating(input: &str) -> Result<u64, Box<dyn Error>>
     Ok(result)
 }
 
-fn check_and_filter_oxygen_readings(
-    input_vec: &[String],
-    bit_to_check: usize,
-) -> Result<Vec<String>, Box<dyn Error>> {
+fn check_and_filter_oxygen_readings(input_vec: &[String], bit_to_check: usize) -> Vec<String> {
     let total_readings = input_vec.len();
     let filter_threshold = total_readings - (total_readings / 2);
 
     let mut number_of_ones = 0;
-    input_vec.iter().for_each(|line| {
+    for line in input_vec.iter() {
         if line.chars().nth(bit_to_check).unwrap() == '1' {
             number_of_ones += 1;
         }
-    });
+    }
 
     let most_common = if number_of_ones < filter_threshold {
         '0'
@@ -87,20 +84,20 @@ fn check_and_filter_oxygen_readings(
     let output: Vec<String> = input_vec
         .iter()
         .filter(|line| line.chars().nth(bit_to_check).unwrap() == most_common)
-        .map(|s| s.to_string())
+        .map(String::from)
         .collect::<Vec<String>>();
 
-    Ok(output)
+    output
 }
 
 fn calculate_co2_scrubber_rating(input: &str) -> Result<u64, Box<dyn Error>> {
     println!("{:?}", input);
-    let input_vec: Vec<String> = input.lines().map(|s| s.to_string()).collect();
+    let input_vec: Vec<String> = input.lines().map(String::from).collect();
 
     let mut result: u64 = 1;
     let mut filtered = input_vec;
     for i in 0..12 {
-        filtered = check_and_filter_c02_readings(&filtered, i)?;
+        filtered = check_and_filter_c02_readings(&filtered, i);
         if filtered.len() == 1 {
             let result_string = filtered.get(0).unwrap();
             result = u64::from_str_radix(result_string, 2)?;
@@ -111,19 +108,16 @@ fn calculate_co2_scrubber_rating(input: &str) -> Result<u64, Box<dyn Error>> {
     Ok(result)
 }
 
-fn check_and_filter_c02_readings(
-    input_vec: &[String],
-    bit_to_check: usize,
-) -> Result<Vec<String>, Box<dyn Error>> {
+fn check_and_filter_c02_readings(input_vec: &[String], bit_to_check: usize) -> Vec<String> {
     let mut number_of_ones: u32 = 0;
     let mut number_of_zeros: u32 = 0;
-    input_vec.iter().for_each(|line| {
+    for line in input_vec.iter() {
         if line.chars().nth(bit_to_check).unwrap() == '0' {
             number_of_zeros += 1;
         } else {
             number_of_ones += 1;
         }
-    });
+    }
 
     let least_common = if number_of_zeros <= number_of_ones {
         '0'
@@ -134,10 +128,10 @@ fn check_and_filter_c02_readings(
     let output: Vec<String> = input_vec
         .iter()
         .filter(|line| line.chars().nth(bit_to_check).unwrap() == least_common)
-        .map(|s| s.to_string())
+        .map(String::from)
         .collect::<Vec<String>>();
 
-    Ok(output)
+    output
 }
 
 #[cfg(test)]

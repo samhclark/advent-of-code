@@ -1,9 +1,7 @@
 // Day 1: Sonar Sweep
 
-use std::error::Error;
-
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> usize {
     let input: Vec<i64> = puzzle_input
         .lines()
         .map(|line| line.parse().unwrap())
@@ -15,12 +13,11 @@ pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
         .count();
 
     println!("Total number of depth increases: {}", increases);
-
-    Ok(increases)
+    increases
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> usize {
     let input: Vec<i64> = puzzle_input
         .lines()
         .map(|line| line.parse().unwrap())
@@ -32,8 +29,7 @@ pub fn part2(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
         .count();
 
     println!("Total number of depth increases: {}", increases);
-
-    Ok(increases)
+    increases
 }
 
 #[cfg(test)]
@@ -52,7 +48,7 @@ mod day01_tests {
 269
 260
 263";
-        assert_eq!(7, part1(input).unwrap());
+        assert_eq!(7, part1(input));
     }
 
     #[test]
@@ -67,6 +63,6 @@ mod day01_tests {
 269
 260
 263";
-        assert_eq!(5, part2(input).unwrap());
+        assert_eq!(5, part2(input));
     }
 }

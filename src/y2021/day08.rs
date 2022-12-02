@@ -1,14 +1,12 @@
 // Day 8: Seven Segment Search
 
-use std::error::Error;
-
 struct Reading {
     patterns: Vec<String>,
     display: Vec<String>,
 }
 
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> usize {
     let puzzle_answer: usize = puzzle_input
         .lines()
         .flat_map(|line| -> Vec<&str> {
@@ -26,11 +24,11 @@ pub fn part1(puzzle_input: &str) -> Result<usize, Box<dyn Error>> {
         .count();
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> i64 {
     let all_readings: Vec<Reading> = puzzle_input
         .lines()
         .map(|line| {
@@ -40,14 +38,14 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
                 .unwrap()
                 .trim()
                 .split_ascii_whitespace()
-                .map(|s| s.to_owned())
+                .map(String::from)
                 .collect();
             let one_output: Vec<String> = split
                 .next()
                 .unwrap()
                 .trim()
                 .split_ascii_whitespace()
-                .map(|s| s.to_owned())
+                .map(String::from)
                 .collect();
             Reading {
                 patterns: one_pattern,
@@ -58,7 +56,7 @@ pub fn part2(puzzle_input: &str) -> Result<i64, Box<dyn Error>> {
 
     let puzzle_answer: i64 = all_readings.iter().map(calculate_output).sum();
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 fn calculate_output(reading: &Reading) -> i64 {
@@ -118,14 +116,14 @@ bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbg
 egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce\n";
 
-        assert_eq!(26, part1(input).unwrap())
+        assert_eq!(26, part1(input))
     }
 
     #[test]
     fn test_case_part_2_easy() {
         let input = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf\n";
 
-        assert_eq!(5353, part2(input).unwrap())
+        assert_eq!(5353, part2(input))
     }
 
     #[test]
@@ -142,6 +140,6 @@ bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbg
 egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce\n";
 
-        assert_eq!(61229, part2(input).unwrap())
+        assert_eq!(61229, part2(input))
     }
 }

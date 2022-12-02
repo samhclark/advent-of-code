@@ -1,6 +1,5 @@
 // Day 4: Giant Squid
 
-use std::error::Error;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -52,7 +51,7 @@ impl FromStr for Card {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut parsed_card: Card = Card {
+        let mut parsed_card: Self = Self {
             squares: [[Square {
                 number: 0,
                 is_called: false,
@@ -72,7 +71,7 @@ impl FromStr for Square {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Square {
+        Ok(Self {
             number: s.parse::<u32>().unwrap(),
             is_called: false,
         })
@@ -80,7 +79,7 @@ impl FromStr for Square {
 }
 
 #[allow(dead_code)]
-pub fn part1(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn Error>> {
+pub fn part1(puzzle_numbers: &str, puzzle_boards: &str) -> u64 {
     let numbers: Vec<u32> = puzzle_numbers
         .split(',')
         .map(|num| num.parse().unwrap())
@@ -107,11 +106,11 @@ pub fn part1(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn E
     let puzzle_answer = calculate_puzzle_answer(winning_card.unwrap(), winning_number.unwrap());
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn Error>> {
+pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> u64 {
     let numbers: Vec<u32> = puzzle_numbers
         .split(',')
         .map(|num| num.parse().unwrap())
@@ -148,14 +147,14 @@ pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> Result<u64, Box<dyn E
     );
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 fn calculate_puzzle_answer(card: Card, number: u32) -> u64 {
     let sum_all_unmarked_numbers: u64 = card
         .squares
         .into_iter()
-        .flat_map(|r| r.into_iter())
+        .flat_map(std::iter::IntoIterator::into_iter)
         .filter(|square| !square.is_called)
         .map(|square| u64::from(square.number))
         .sum::<u64>();
@@ -188,6 +187,6 @@ mod day04_tests {
 22 11 13  6  5
  2  0 12  3  7";
 
-        assert_eq!(4512, part1(numbers, boards).unwrap())
+        assert_eq!(4512, part1(numbers, boards))
     }
 }

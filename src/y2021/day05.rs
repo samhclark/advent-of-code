@@ -1,6 +1,5 @@
 // Day 5: Hydrothermal Venture
 
-use std::error::Error;
 use std::num::ParseIntError;
 use std::str::FromStr;
 
@@ -15,9 +14,10 @@ struct Point {
 impl FromStr for Point {
     type Err = ParseIntError;
 
+    #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let coords: Vec<u64> = s.split(',').map(|n| n.trim().parse().unwrap()).collect();
-        Ok(Point {
+        Ok(Self {
             x: coords[0] as usize,
             y: coords[1] as usize,
         })
@@ -38,7 +38,7 @@ impl FromStr for Line {
             .split("->")
             .map(|p| p.trim().parse::<Point>().unwrap())
             .collect();
-        Ok(Line {
+        Ok(Self {
             start: points[0],
             end: points[1],
         })
@@ -46,6 +46,7 @@ impl FromStr for Line {
 }
 
 impl Line {
+    #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
     fn points(&self) -> Vec<Point> {
         let mut points: Vec<Point> = Vec::new();
 
@@ -73,7 +74,7 @@ impl Line {
 }
 
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> u64 {
     let mut vents: Vec<Line> = puzzle_input
         .lines()
         .map(|line| line.parse::<Line>().unwrap())
@@ -91,16 +92,16 @@ pub fn part1(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
 
     let answer = grid
         .into_iter()
-        .flat_map(|r| r.into_iter())
+        .flat_map(std::iter::IntoIterator::into_iter)
         .filter(|&n| n > 1)
         .count();
 
     println!("Puzzle answer: {}", answer);
-    Ok(answer as u64)
+    answer as u64
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> u64 {
     let vents: Vec<Line> = puzzle_input
         .lines()
         .map(|line| line.parse::<Line>().unwrap())
@@ -116,12 +117,12 @@ pub fn part2(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
 
     let answer = grid
         .into_iter()
-        .flat_map(|r| r.into_iter())
+        .flat_map(std::iter::IntoIterator::into_iter)
         .filter(|&n| n > 1)
         .count();
 
     println!("Puzzle answer: {}", answer);
-    Ok(answer as u64)
+    answer as u64
 }
 
 #[cfg(test)]
@@ -142,7 +143,7 @@ mod day05_tests {
 0,0 -> 8,8
 5,5 -> 8,2";
 
-        assert_eq!(5, part1(input).unwrap())
+        assert_eq!(5, part1(input))
     }
 
     #[test]
@@ -158,6 +159,6 @@ mod day05_tests {
 0,0 -> 8,8
 5,5 -> 8,2";
 
-        assert_eq!(12, part2(input).unwrap())
+        assert_eq!(12, part2(input))
     }
 }

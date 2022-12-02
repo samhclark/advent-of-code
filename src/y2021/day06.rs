@@ -1,9 +1,7 @@
 // Day 6: Lanternfish
 
-use std::error::Error;
-
 #[allow(dead_code)]
-pub fn part1(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
+pub fn part1(puzzle_input: &str) -> u128 {
     const DAYS: usize = 80;
 
     let input_fish: Vec<usize> = puzzle_input
@@ -11,14 +9,14 @@ pub fn part1(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
         .map(|s| s.parse().unwrap())
         .collect();
 
-    let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish).unwrap();
+    let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish);
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
 #[allow(dead_code)]
-pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
+pub fn part2(puzzle_input: &str) -> u128 {
     const DAYS: usize = 256;
 
     let input_fish: Vec<usize> = puzzle_input
@@ -26,16 +24,13 @@ pub fn part2(puzzle_input: &str) -> Result<u128, Box<dyn Error>> {
         .map(|s| s.parse().unwrap())
         .collect();
 
-    let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish).unwrap();
+    let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish);
 
     println!("Puzzle answer: {}", puzzle_answer);
-    Ok(puzzle_answer)
+    puzzle_answer
 }
 
-fn simulate_lanternfish_lifecycle(
-    days: usize,
-    starting_fish: Vec<usize>,
-) -> Result<u128, Box<dyn Error>> {
+fn simulate_lanternfish_lifecycle(days: usize, starting_fish: Vec<usize>) -> u128 {
     let mut buckets_of_fish: [u128; 9] = [0; 9];
 
     for fish in starting_fish {
@@ -47,7 +42,7 @@ fn simulate_lanternfish_lifecycle(
         buckets_of_fish[6] += buckets_of_fish[8];
     }
 
-    Ok(buckets_of_fish.iter().copied().sum())
+    buckets_of_fish.iter().copied().sum()
 }
 
 #[cfg(test)]
@@ -59,13 +54,13 @@ mod day06_tests {
     fn test_case_part_1() {
         let input = "3,4,3,1,2";
 
-        assert_eq!(5934, part1(input).unwrap())
+        assert_eq!(5934, part1(input))
     }
 
     #[test]
     fn test_case_part_2() {
         let input = "3,4,3,1,2";
 
-        assert_eq!(26984457539, part2(input).unwrap())
+        assert_eq!(26984457539, part2(input))
     }
 }
