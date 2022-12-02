@@ -1,5 +1,7 @@
 // Day 2: Rock Paper Scissors
 
+use std::{str::FromStr, string::ParseError};
+
 static INPUT: &str = include_str!("../../inputs/2022/day02.in");
 
 #[allow(dead_code)]
@@ -69,6 +71,71 @@ fn do_part2(strategy: &str) -> u64 {
     }
 
     total_score
+}
+
+// After reading some threads online, I realized you can do this with a LUT.
+// Let's try
+struct Round {
+    part1_score: u64,
+    part2_score: u64,
+}
+
+impl FromStr for Round {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "A X" => Self {
+                part1_score: 4,
+                part2_score: 3,
+            },
+            "A Y" => Self {
+                part1_score: 8,
+                part2_score: 4,
+            },
+            "A Z" => Self {
+                part1_score: 3,
+                part2_score: 8,
+            },
+            "B X" => Self {
+                part1_score: 1,
+                part2_score: 1,
+            },
+            "B Y" => Self {
+                part1_score: 5,
+                part2_score: 5,
+            },
+            "B Z" => Self {
+                part1_score: 9,
+                part2_score: 9,
+            },
+            "C X" => Self {
+                part1_score: 7,
+                part2_score: 2,
+            },
+            "C Y" => Self {
+                part1_score: 2,
+                part2_score: 6,
+            },
+            "C Z" => Self {
+                part1_score: 6,
+                part2_score: 7,
+            },
+            _ => unreachable!(),
+        })
+    }
+}
+
+pub fn with_lut() {
+    let rounds: Vec<Round> = INPUT.lines().flat_map(Round::from_str).collect();
+    println!(
+        "part 1 LUT: {}",
+        rounds.iter().map(|r| r.part1_score).sum::<u64>()
+    );
+    println!(
+        "part 2 LUT: {}",
+        rounds.iter().map(|r| r.part2_score).sum::<u64>()
+    );
 }
 
 #[cfg(test)]
