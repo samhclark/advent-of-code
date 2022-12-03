@@ -1,3 +1,7 @@
+// Day 3: Rucksack Reorganization
+
+use std::collections::HashSet;
+
 use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2022/day03.in");
@@ -13,11 +17,46 @@ pub fn part02() {
 }
 
 fn do_part1(puzzle_input: &str) -> u64 {
-    0
+    let mut sum_of_priorities: u64 = 0;
+    for rucksack in puzzle_input.lines() {
+        let (a, b) = rucksack.split_at(rucksack.len() / 2);
+        let a: HashSet<char> = a.chars().collect();
+        'inner: for c in b.chars() {
+            if a.contains(&c) {
+                let priority = if c.is_ascii_lowercase() {
+                    (c as u8) - b'`'
+                } else {
+                    (c as u8) - b'&'
+                };
+                sum_of_priorities += priority as u64;
+                break 'inner;
+            }
+        }
+    }
+    sum_of_priorities
 }
 
 fn do_part2(puzzle_input: &str) -> u64 {
-    0
+    let mut sum_of_priorities: u64 = 0;
+
+    let mut groups = puzzle_input.lines().chunks(3);
+    for mut group in &groups {
+        // let content = group.next().unwrap();
+        let elf1_items: HashSet<char> = group.next().unwrap().chars().collect();
+        let elf2_items: HashSet<char> = group.next().unwrap().chars().collect();
+        'inner: for item in group.next().unwrap().chars() {
+            if elf1_items.contains(&item) && elf2_items.contains(&item) {
+                let priority = if item.is_ascii_lowercase() {
+                    (item as u8) - b'`'
+                } else {
+                    (item as u8) - b'&'
+                };
+                sum_of_priorities += priority as u64;
+                break 'inner;
+            }
+        }
+    }
+    sum_of_priorities
 }
 
 #[cfg(test)]
@@ -27,13 +66,23 @@ mod test {
 
     #[test]
     fn test_case_part_1() {
-        let input = "";
-        assert_eq!(do_part1(input), 15);
+        let input = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw\n";
+        assert_eq!(do_part1(input), 157);
     }
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
-        assert_eq!(do_part2(input), 12);
+        let input = "vJrwpWtwJgWrhcsFMMfFFhFp
+jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+PmmdzqPrVvPwwTWBwg
+wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+ttgJtRGJQctTZtZT
+CrZsJsPPZsGzwwsLwLmpwMDw\n";
+        assert_eq!(do_part2(input), 70);
     }
 }
