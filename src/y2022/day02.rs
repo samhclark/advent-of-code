@@ -126,6 +126,7 @@ impl FromStr for Round {
     }
 }
 
+#[allow(dead_code)]
 pub fn with_lut() {
     let rounds: Vec<Round> = INPUT.lines().flat_map(Round::from_str).collect();
     println!(

@@ -28,7 +28,7 @@ fn do_part1(puzzle_input: &str) -> u64 {
                 } else {
                     (c as u8) - b'&'
                 };
-                sum_of_priorities += priority as u64;
+                sum_of_priorities += u64::from(priority);
                 break 'inner;
             }
         }
@@ -39,9 +39,8 @@ fn do_part1(puzzle_input: &str) -> u64 {
 fn do_part2(puzzle_input: &str) -> u64 {
     let mut sum_of_priorities: u64 = 0;
 
-    let mut groups = puzzle_input.lines().chunks(3);
+    let groups = puzzle_input.lines().chunks(3);
     for mut group in &groups {
-        // let content = group.next().unwrap();
         let elf1_items: HashSet<char> = group.next().unwrap().chars().collect();
         let elf2_items: HashSet<char> = group.next().unwrap().chars().collect();
         'inner: for item in group.next().unwrap().chars() {
@@ -51,7 +50,7 @@ fn do_part2(puzzle_input: &str) -> u64 {
                 } else {
                     (item as u8) - b'&'
                 };
-                sum_of_priorities += priority as u64;
+                sum_of_priorities += u64::from(priority);
                 break 'inner;
             }
         }
