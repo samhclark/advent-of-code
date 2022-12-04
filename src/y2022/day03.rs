@@ -1,5 +1,3 @@
-// Day 3: Rucksack Reorganization
-
 use std::collections::HashSet;
 
 use itertools::Itertools;
