@@ -1,7 +1,5 @@
 use std::collections::HashSet;
 
-use itertools::Itertools;
-
 static INPUT: &str = include_str!("../../inputs/2022/day06.in");
 
 #[allow(dead_code)]
@@ -15,34 +13,27 @@ pub fn part02() {
 }
 
 fn do_part1(puzzle_input: &str) -> u64 {
-    for (i, (a, b, c, d)) in puzzle_input.chars().tuple_windows().enumerate() {
-        let mut s = HashSet::<char>::new();
-        s.insert(a);
-        s.insert(b);
-        s.insert(c);
-        s.insert(d);
-
-        if s.len() == 4 {
-            return u64::from(4 + i as u64);
-        }
-    }
-    0
+    do_puzzle(puzzle_input, 4).expect("Should always pass")
 }
 
 fn do_part2(puzzle_input: &str) -> u64 {
+    do_puzzle(puzzle_input, 14).expect("Should always pass")
+}
+
+fn do_puzzle(puzzle_input: &str, window_size: usize) -> Option<u64> {
     for (i, w) in puzzle_input
         .chars()
         .collect::<Vec<char>>()
-        .windows(14)
+        .windows(window_size)
         .enumerate()
     {
-        let s: HashSet<char> = w.clone().iter().map(|c| *c).collect();
+        let s: HashSet<char> = w.iter().copied().collect();
 
-        if s.len() == 14 {
-            return u64::from(14 + i as u64);
+        if s.len() == window_size {
+            return Some(window_size as u64 + i as u64);
         }
     }
-    0
+    None
 }
 
 #[cfg(test)]
