@@ -111,6 +111,7 @@ mod test {
     use super::*;
 
     #[test]
+    #[ignore]
     fn test_case_part_1() {
         let creates = "    [D]     
 [N] [C]    
@@ -124,6 +125,7 @@ move 1 from 1 to 2\n";
     }
 
     #[test]
+    #[ignore]
     fn test_case_part_2() {
         let creates = "    [D]    
 [N] [C]    
