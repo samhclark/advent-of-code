@@ -135,7 +135,7 @@ pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> u64 {
         }
     }
 
-    println!("Last winning card was: {last_card_to_win:?}", );
+    println!("Last winning card was: {last_card_to_win:?}",);
     println!("Last number called to produce win was: {last_number_to_produce_win:?}");
 
     let puzzle_answer = calculate_puzzle_answer(
