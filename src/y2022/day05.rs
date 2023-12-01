@@ -32,10 +32,10 @@ fn do_part1(crates: &str, moves: &str) -> String {
         vec![],
     ];
     for line in crates.lines().rev() {
-        for i in 0..9_usize {
+        for (i, el) in stacks.iter_mut().enumerate().take(9) {
             let item = line.chars().nth(1 + (4 * i)).unwrap();
             if item.is_alphabetic() {
-                stacks[i].push(item);
+                el.push(item);
             }
         }
     }
@@ -53,8 +53,8 @@ fn do_part1(crates: &str, moves: &str) -> String {
     }
 
     let mut result: Vec<char> = vec![];
-    for i in 0..9_usize {
-        result.push(stacks[i].pop().unwrap());
+    for item in stacks.iter_mut().take(9) {
+        result.push(item.pop().unwrap());
     }
 
     result.iter().collect()

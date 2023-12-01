@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 static INPUT: &str = include_str!("../../inputs/2022/day07.in");
 
 #[allow(dead_code)]
@@ -12,10 +10,12 @@ pub fn part02() {
     println!("[AOC 2022, Day 7, Part 2] Answer is: {}", do_part2(INPUT));
 }
 
+#[allow(unused_variables)]
 const fn do_part1(puzzle_input: &str) -> u64 {
     0
 }
 
+#[allow(unused_variables)]
 const fn do_part2(puzzle_input: &str) -> u64 {
     0
 }

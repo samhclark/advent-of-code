@@ -37,8 +37,7 @@ fn step(grid: &mut [[u32; 10]; 10]) -> i64 {
 
     // Step 2: Check for flashes
     let mut num_flashes = 0;
-    while !flashes.is_empty() {
-        let (i, j) = flashes.pop().unwrap();
+    while let Some((i, j)) = flashes.pop() {
         if grid[i][j] == 0 {
             continue;
         }

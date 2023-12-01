@@ -46,7 +46,7 @@ impl FromStr for Line {
 }
 
 impl Line {
-    #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+    #[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation, clippy::cast_possible_wrap)]
     fn points(&self) -> Vec<Point> {
         let mut points: Vec<Point> = Vec::new();
 

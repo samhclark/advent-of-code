@@ -100,8 +100,7 @@ fn find_largest_basins(heightmap: &[Vec<u32>], lowpoints: &[Point]) -> (u32, u32
         let mut this_basin_size = 0;
         let mut to_visit: Vec<Point> = vec![*point];
 
-        while !to_visit.is_empty() {
-            let current = to_visit.pop().expect("to_visit was empty");
+        while let Some(current) = to_visit.pop() {
             // Skip if already visited
             if visited.contains(&current) {
                 continue;

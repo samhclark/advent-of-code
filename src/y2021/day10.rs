@@ -133,8 +133,7 @@ pub fn part2(puzzle_input: &str) -> i64 {
         //line is incomplete
         if !stack.is_empty() {
             let mut this_score: i64 = 0;
-            while !stack.is_empty() {
-                let c = stack.pop().unwrap();
+            while let Some(c) = stack.pop() {
                 match c {
                     '(' => {
                         this_score *= 5;
