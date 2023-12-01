@@ -32,7 +32,7 @@ pub fn part1(puzzle_input: &str) -> Result<u64, Box<dyn Error>> {
     let epsilon_number = u64::from_str_radix(&epsilon, 2)?;
 
     let puzzle_answer = gamma_number * epsilon_number;
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     Ok(puzzle_answer)
 }
 
@@ -42,12 +42,12 @@ pub fn part2(input: &str) -> Result<u64, Box<dyn Error>> {
     let co2_scrubber_rating: u64 = calculate_co2_scrubber_rating(input)?;
 
     let puzzle_answer = oxygen_generator_rating * co2_scrubber_rating;
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     Ok(puzzle_answer)
 }
 
 fn calculate_oxygen_generator_rating(input: &str) -> Result<u64, Box<dyn Error>> {
-    println!("{:?}", input);
+    println!("{input:?}");
     let input_vec: Vec<String> = input.lines().map(String::from).collect();
 
     let mut result: u64 = 1;
@@ -69,7 +69,7 @@ fn check_and_filter_oxygen_readings(input_vec: &[String], bit_to_check: usize) -
     let filter_threshold = total_readings - (total_readings / 2);
 
     let mut number_of_ones = 0;
-    for line in input_vec.iter() {
+    for line in input_vec {
         if line.chars().nth(bit_to_check).unwrap() == '1' {
             number_of_ones += 1;
         }
@@ -91,7 +91,7 @@ fn check_and_filter_oxygen_readings(input_vec: &[String], bit_to_check: usize) -
 }
 
 fn calculate_co2_scrubber_rating(input: &str) -> Result<u64, Box<dyn Error>> {
-    println!("{:?}", input);
+    println!("{input:?}");
     let input_vec: Vec<String> = input.lines().map(String::from).collect();
 
     let mut result: u64 = 1;
@@ -111,7 +111,7 @@ fn calculate_co2_scrubber_rating(input: &str) -> Result<u64, Box<dyn Error>> {
 fn check_and_filter_c02_readings(input_vec: &[String], bit_to_check: usize) -> Vec<String> {
     let mut number_of_ones: u32 = 0;
     let mut number_of_zeros: u32 = 0;
-    for line in input_vec.iter() {
+    for line in input_vec {
         if line.chars().nth(bit_to_check).unwrap() == '0' {
             number_of_zeros += 1;
         } else {

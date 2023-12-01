@@ -6,7 +6,7 @@ pub fn part1(puzzle_input: &str) -> i64 {
 
     let puzzle_answer: i64 = (0..100).map(|_| step(&mut octopus_grid)).sum();
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -103,7 +103,7 @@ pub fn part2(puzzle_input: &str) -> i64 {
         step_number += 1;
     }
     let puzzle_answer: i64 = step_number;
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

@@ -12,11 +12,11 @@ pub fn part02() {
     println!("[AOC 2022, Day 7, Part 2] Answer is: {}", do_part2(INPUT));
 }
 
-fn do_part1(puzzle_input: &str) -> u64 {
+const fn do_part1(puzzle_input: &str) -> u64 {
     0
 }
 
-fn do_part2(puzzle_input: &str) -> u64 {
+const fn do_part2(puzzle_input: &str) -> u64 {
     0
 }
 

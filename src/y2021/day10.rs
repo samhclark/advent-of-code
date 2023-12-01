@@ -63,7 +63,7 @@ pub fn part1(puzzle_input: &str) -> i64 {
     }
 
     let puzzle_answer: i64 = scores.iter().sum();
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -162,7 +162,7 @@ pub fn part2(puzzle_input: &str) -> i64 {
     scores.sort_unstable();
 
     let puzzle_answer: i64 = scores.get(scores.len() / 2).unwrap().to_owned();
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

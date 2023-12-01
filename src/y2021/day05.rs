@@ -96,7 +96,7 @@ pub fn part1(puzzle_input: &str) -> u64 {
         .filter(|&n| n > 1)
         .count();
 
-    println!("Puzzle answer: {}", answer);
+    println!("Puzzle answer: {answer}");
     answer as u64
 }
 
@@ -121,7 +121,7 @@ pub fn part2(puzzle_input: &str) -> u64 {
         .filter(|&n| n > 1)
         .count();
 
-    println!("Puzzle answer: {}", answer);
+    println!("Puzzle answer: {answer}");
     answer as u64
 }
 

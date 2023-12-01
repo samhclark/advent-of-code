@@ -105,7 +105,7 @@ pub fn part1(puzzle_numbers: &str, puzzle_boards: &str) -> u64 {
 
     let puzzle_answer = calculate_puzzle_answer(winning_card.unwrap(), winning_number.unwrap());
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -135,18 +135,15 @@ pub fn part2(puzzle_numbers: &str, puzzle_boards: &str) -> u64 {
         }
     }
 
-    println!("Last winning card was: {:?}", last_card_to_win);
-    println!(
-        "Last number called to produce win was: {:?}",
-        last_number_to_produce_win
-    );
+    println!("Last winning card was: {last_card_to_win:?}", );
+    println!("Last number called to produce win was: {last_number_to_produce_win:?}");
 
     let puzzle_answer = calculate_puzzle_answer(
         last_card_to_win.unwrap(),
         last_number_to_produce_win.unwrap(),
     );
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

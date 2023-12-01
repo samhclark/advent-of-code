@@ -34,7 +34,7 @@ impl FromStr for Instruction {
             "forward" => Command::Forward,
             "down" => Command::Down,
             "up" => Command::Up,
-            unknown => panic!("Unknown command {}", unknown),
+            unknown => panic!("Unknown command {unknown}"),
         };
         let magnitude = data.parse::<i64>()?;
 

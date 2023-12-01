@@ -23,7 +23,7 @@ pub fn part1(puzzle_input: &str) -> usize {
         })
         .count();
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -55,7 +55,7 @@ pub fn part2(puzzle_input: &str) -> i64 {
         .collect();
 
     let puzzle_answer: i64 = all_readings.iter().map(calculate_output).sum();
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

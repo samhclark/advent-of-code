@@ -12,7 +12,7 @@ pub fn part1(puzzle_input: &str) -> u32 {
     let lowpoints: Vec<Point> = get_low_points_from_heightmap(&heightmap);
 
     let puzzle_answer: u32 = determine_risk_level(&heightmap, &lowpoints);
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -88,7 +88,7 @@ pub fn part2(puzzle_input: &str) -> u128 {
 
     let puzzle_answer: u128 =
         u128::from(largest_basins.0) * u128::from(largest_basins.1) * u128::from(largest_basins.2);
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

@@ -14,7 +14,7 @@ pub fn part1(puzzle_input: &str) -> i64 {
     let median: i64 = positions[midpoint];
 
     let spent_fuel: i64 = positions.iter().map(|x| (x - median).abs()).sum();
-    println!("Puzzle answer: {}", spent_fuel);
+    println!("Puzzle answer: {spent_fuel}");
     spent_fuel
 }
 
@@ -48,7 +48,7 @@ pub fn part2(puzzle_input: &str) -> i64 {
 
     // ...and choose whichever answer is smaller
     let puzzle_answer = min(spent_fuel_1, spent_fuel_2);
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

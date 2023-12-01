@@ -11,7 +11,7 @@ pub fn part1(puzzle_input: &str) -> u128 {
 
     let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish);
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 
@@ -26,7 +26,7 @@ pub fn part2(puzzle_input: &str) -> u128 {
 
     let puzzle_answer = simulate_lanternfish_lifecycle(DAYS, input_fish);
 
-    println!("Puzzle answer: {}", puzzle_answer);
+    println!("Puzzle answer: {puzzle_answer}");
     puzzle_answer
 }
 

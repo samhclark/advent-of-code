@@ -12,7 +12,7 @@ pub fn part1(puzzle_input: &str) -> usize {
         .filter(|window| window[1] > window[0])
         .count();
 
-    println!("Total number of depth increases: {}", increases);
+    println!("Total number of depth increases: {increases}");
     increases
 }
 
@@ -28,7 +28,7 @@ pub fn part2(puzzle_input: &str) -> usize {
         .filter(|window| window[3] > window[0])
         .count();
 
-    println!("Total number of depth increases: {}", increases);
+    println!("Total number of depth increases: {increases}");
     increases
 }
 
