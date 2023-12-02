@@ -34,7 +34,8 @@ fn sum_calibration_values(calibration_document: &str) -> u64 {
                 .last()
                 .expect("(last) all lines contain at least one digit");
             let calibration_value = format!("{first_digit}{last_digit}");
-            calibration_value.parse::<u64>()
+            calibration_value
+                .parse::<u64>()
                 .expect("calibration value always fits in 8 bits")
         })
         .sum()
