@@ -4,9 +4,14 @@ use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2023/day02.in");
 
+#[derive(Debug, PartialEq)]
+enum Color {
+    RED, GREEN, BLUE
+}
+
 #[allow(dead_code)]
 pub fn part01() {
-    let answer = "";
+    let answer = sum_ids_of_possible_games(INPUT, 100);
     println!("Puzzle answer: {answer}");
 }
 
@@ -16,6 +21,50 @@ pub fn part02() {
     println!("Puzzle answer: {answer}");
 }
 
+fn sum_ids_of_possible_games(records_of_games: &str, num_games: u64) -> u64 {
+    let max_red = 12;
+    let max_green = 13;
+    let max_blue = 14;
+
+    let mut sum_of_ids: u64 = (1..=num_games).sum();
+    'thisgame: for (id, game) in records_of_games.lines().enumerate() {
+        // strip game header
+        let (_header, all_rounds) = game.split_once(':').expect("all games have a header");
+        let rounds = all_rounds.split(';');
+        'thisround: for round in rounds {
+            let cube_counts = round.split(',');
+            'thiscubeqtypair: for count_of_one_color in cube_counts {
+                let quantity_str: String = count_of_one_color.chars().filter(char::is_ascii_digit).collect::<String>();
+                let quantity = quantity_str.parse::<u64>().expect("digits always fit in 64 bits");
+                let color_str: String = count_of_one_color.chars().filter(char::is_ascii_alphabetic).collect::<String>();
+                let color = match color_str.as_str() {
+                    "red" => Color::RED,
+                    "green" => Color::GREEN,
+                    "blue" => Color::BLUE,
+                    _ => unreachable!("colors are always red, green, or blue")
+                };
+
+                if color == Color::RED && quantity > max_red {
+                    sum_of_ids = sum_of_ids - (id as u64 + 1);
+                    continue 'thisgame;
+                }
+
+                if color == Color::GREEN && quantity > max_green {
+                    sum_of_ids = sum_of_ids - (id as u64 + 1);
+                    continue 'thisgame;
+                }
+
+                if color == Color::BLUE && quantity > max_blue {
+                    sum_of_ids = sum_of_ids - (id as u64 + 1);
+                    continue 'thisgame;
+                }
+            }
+        }
+    }
+
+    sum_of_ids
+}
+
 #[cfg(test)]
 mod test {
 
@@ -23,8 +72,12 @@ mod test {
 
     #[test]
     fn test_case_part_1() {
-        let input = "";
-        assert_eq!(142, 142);
+        let input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+        assert_eq!(sum_ids_of_possible_games(input, 5), 8);
     }
 
     #[test]
