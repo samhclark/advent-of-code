@@ -1,5 +1,7 @@
 // use itertools::Itertools;
 
+use std::{str::FromStr, num::ParseIntError};
+
 use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2023/day02.in");
@@ -7,6 +9,37 @@ static INPUT: &str = include_str!("../../inputs/2023/day02.in");
 #[derive(Debug, PartialEq)]
 enum Color {
     RED, GREEN, BLUE
+}
+
+#[derive(Debug)]
+struct Handful {
+    pub red_qty: u64,
+    pub green_qty: u64,
+    pub blue_qty: u64
+}
+
+impl FromStr for Handful {
+    type Err = ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut red: u64 = 0;
+        let mut green: u64 = 0;
+        let mut blue: u64 = 0; 
+        let trimmed = s.trim();
+        let quantities = trimmed.split(',');
+        for count_of_one_color in quantities {
+            let quantity_str: String = count_of_one_color.chars().filter(char::is_ascii_digit).collect::<String>();
+            let quantity = quantity_str.parse::<u64>().expect("digits always fit in 64 bits");
+            let color_str: String = count_of_one_color.chars().filter(char::is_ascii_alphabetic).collect::<String>();
+            match color_str.as_str() {
+                "red" => red = quantity,
+                "green" => green = quantity,
+                "blue" => blue = quantity,
+                _ => unreachable!("colors are always red, green, or blue")
+            };
+        }
+        Ok(Self { red_qty: red, green_qty: green, blue_qty: blue })
+    }
 }
 
 #[allow(dead_code)]
@@ -32,32 +65,20 @@ fn sum_ids_of_possible_games(records_of_games: &str, num_games: u64) -> u64 {
         let (_header, all_rounds) = game.split_once(':').expect("all games have a header");
         let rounds = all_rounds.split(';');
         'thisround: for round in rounds {
-            let cube_counts = round.split(',');
-            'thiscubeqtypair: for count_of_one_color in cube_counts {
-                let quantity_str: String = count_of_one_color.chars().filter(char::is_ascii_digit).collect::<String>();
-                let quantity = quantity_str.parse::<u64>().expect("digits always fit in 64 bits");
-                let color_str: String = count_of_one_color.chars().filter(char::is_ascii_alphabetic).collect::<String>();
-                let color = match color_str.as_str() {
-                    "red" => Color::RED,
-                    "green" => Color::GREEN,
-                    "blue" => Color::BLUE,
-                    _ => unreachable!("colors are always red, green, or blue")
-                };
+            let handful = Handful::from_str(round).expect("always parseable");
+            if handful.red_qty > max_red {
+                sum_of_ids = sum_of_ids - (id as u64 + 1);
+                continue 'thisgame;
+            }
 
-                if color == Color::RED && quantity > max_red {
-                    sum_of_ids = sum_of_ids - (id as u64 + 1);
-                    continue 'thisgame;
-                }
+            if handful.green_qty > max_green {
+                sum_of_ids = sum_of_ids - (id as u64 + 1);
+                continue 'thisgame;
+            }
 
-                if color == Color::GREEN && quantity > max_green {
-                    sum_of_ids = sum_of_ids - (id as u64 + 1);
-                    continue 'thisgame;
-                }
-
-                if color == Color::BLUE && quantity > max_blue {
-                    sum_of_ids = sum_of_ids - (id as u64 + 1);
-                    continue 'thisgame;
-                }
+            if handful.blue_qty > max_blue {
+                sum_of_ids = sum_of_ids - (id as u64 + 1);
+                continue 'thisgame;
             }
         }
     }
