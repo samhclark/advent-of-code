@@ -1,15 +1,6 @@
-// use itertools::Itertools;
-
-use std::{str::FromStr, num::ParseIntError};
-
-use itertools::Itertools;
+use std::{str::FromStr, num::ParseIntError, cmp::max};
 
 static INPUT: &str = include_str!("../../inputs/2023/day02.in");
-
-#[derive(Debug, PartialEq)]
-enum Color {
-    RED, GREEN, BLUE
-}
 
 #[derive(Debug)]
 struct Handful {
@@ -50,7 +41,7 @@ pub fn part01() {
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = "";
+    let answer = sum_of_powers_of_min_sets(INPUT);
     println!("Puzzle answer: {answer}");
 }
 
@@ -86,6 +77,29 @@ fn sum_ids_of_possible_games(records_of_games: &str, num_games: u64) -> u64 {
     sum_of_ids
 }
 
+fn sum_of_powers_of_min_sets(records_of_games: &str) -> u64 {
+    let mut total_power = 0;
+    for game in records_of_games.lines() {
+        // strip game header
+        let (_header, rounds) = game.split_once(':').expect("all games have a header");
+
+        let mut min_red = 0;
+        let mut min_green = 0;
+        let mut min_blue = 0;
+        
+        for round in rounds.split(';') {
+            let handful = Handful::from_str(round).expect("always parseable");
+            min_red = max(handful.red_qty, min_red);
+            min_green = max(handful.green_qty, min_green);
+            min_blue = max(handful.blue_qty, min_blue);
+        }
+
+        let power = min_red * min_green * min_blue;
+        total_power += power;
+    }
+
+    total_power
+}
 #[cfg(test)]
 mod test {
 
@@ -103,7 +117,11 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
-        assert_eq!(281, 281);
+        let input = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+        assert_eq!(sum_of_powers_of_min_sets(input), 2286);
     }
 }
