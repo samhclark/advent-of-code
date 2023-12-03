@@ -1,4 +1,5 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
+use std::hash::Hash;
 
 static INPUT: &str = include_str!("../../inputs/2023/day03.in");
 
@@ -8,6 +9,7 @@ struct Point {
     col: usize,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct PartNumber {
     value: u32,
     locations: Vec<Point>,
@@ -21,7 +23,7 @@ pub fn part01() {
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = "";
+    let answer = sum_of_gear_ratios(INPUT);
     println!("Puzzle answer: {answer}");
 }
 
@@ -150,6 +152,48 @@ fn get_list_of_parts(schematic: &str) -> Vec<PartNumber> {
     parts
 }
 
+fn sum_of_gear_ratios(schematic: &str) -> u64 {
+    let mut total_gear_ratios: u64 = 0;
+    let parts = get_list_of_parts(schematic);
+    let point_to_adjacent_parts = get_part_adjacency_map(parts);
+    for (row, row_str) in schematic.lines().enumerate() {
+        for (col, c) in row_str.chars().enumerate() {
+            if c == '*' {
+                if let Some(adjacent_parts) = point_to_adjacent_parts.get(&Point { row, col }) {
+                    if adjacent_parts.len() == 2 {
+                    total_gear_ratios += adjacent_parts.iter().map(|part| u64::from(part.value)).reduce(|acc, e| acc * e).unwrap();
+                    }
+                }
+            }
+        }
+    }
+    total_gear_ratios
+}
+
+fn get_part_adjacency_map(parts: Vec<PartNumber>) -> HashMap<Point, HashSet<PartNumber>> {
+    let mut point_to_parts: HashMap<Point, HashSet<PartNumber>> = HashMap::new();
+
+    for part in parts {
+        let mut all_adj_points: HashSet<Point> = HashSet::new();
+        for loc in part.locations.clone() {
+            all_adj_points.extend(adjacent_points(&loc));
+        }
+        for adj_point in all_adj_points {
+            if !point_to_parts.contains_key(&adj_point) {
+                let mut set = HashSet::new();
+                set.insert(part.clone());
+                point_to_parts.insert(adj_point, set);
+            } else {
+                let current_parts = point_to_parts.get_mut(&adj_point).unwrap();
+                current_parts.insert(part.clone());
+                // point_to_parts.insert(adj_point, current_parts.clone());
+            }
+        }
+    }
+
+    point_to_parts
+}
+
 #[cfg(test)]
 mod test {
 
@@ -172,7 +216,16 @@ mod test {
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
-        assert_eq!(1, 1);
+        let input = "467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..";
+        assert_eq!(sum_of_gear_ratios(input), 467835);
     }
 }
