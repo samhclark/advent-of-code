@@ -40,16 +40,13 @@ fn sum_of_part_numbers(schematic: &str) -> u64 {
 
 fn build_adjacency_matrix_to_symbols(schematic: &str) -> HashSet<Point> {
     let mut adjacencies = HashSet::new();
-    for (row_num, row) in schematic.lines().enumerate() {
-        for (col_num, c) in row.chars().enumerate() {
+    for (row, row_str) in schematic.lines().enumerate() {
+        for (col, c) in row_str.chars().enumerate() {
             if c.is_ascii_digit() || c == '.' {
                 continue;
             }
 
-            let points = adjacent_points(&Point {
-                row: row_num,
-                col: col_num,
-            });
+            let points = adjacent_points(&Point { row, col });
             for p in points {
                 adjacencies.insert(p);
             }
@@ -59,64 +56,64 @@ fn build_adjacency_matrix_to_symbols(schematic: &str) -> HashSet<Point> {
     adjacencies
 }
 
-fn adjacent_points(point: &Point) -> Vec<Point> {
+fn adjacent_points(center: &Point) -> Vec<Point> {
     // O O O
     // O * *
     // O * *
     let mut adjacent_points = vec![
         Point {
-            row: point.row,
-            col: point.col,
+            row: center.row,
+            col: center.col,
         },
         Point {
-            row: point.row + 1,
-            col: point.col,
+            row: center.row + 1,
+            col: center.col,
         },
         Point {
-            row: point.row,
-            col: point.col + 1,
+            row: center.row,
+            col: center.col + 1,
         },
         Point {
-            row: point.row + 1,
-            col: point.col + 1,
+            row: center.row + 1,
+            col: center.col + 1,
         },
     ];
 
     // * O O
     // O * *
     // O * *
-    if point.row > 0 && point.col > 0 {
+    if center.row > 0 && center.col > 0 {
         adjacent_points.push(Point {
-            row: point.row - 1,
-            col: point.col - 1,
+            row: center.row - 1,
+            col: center.col - 1,
         });
     }
 
     // * * *
     // O * *
     // O * *
-    if point.row > 0 {
+    if center.row > 0 {
         adjacent_points.push(Point {
-            row: point.row - 1,
-            col: point.col,
+            row: center.row - 1,
+            col: center.col,
         });
         adjacent_points.push(Point {
-            row: point.row - 1,
-            col: point.col + 1,
+            row: center.row - 1,
+            col: center.col + 1,
         });
     }
 
     // * * *
     // * * *
     // * * *
-    if point.col > 0 {
+    if center.col > 0 {
         adjacent_points.push(Point {
-            row: point.row,
-            col: point.col - 1,
+            row: center.row,
+            col: center.col - 1,
         });
         adjacent_points.push(Point {
-            row: point.row + 1,
-            col: point.col - 1,
+            row: center.row + 1,
+            col: center.col - 1,
         });
     }
 
