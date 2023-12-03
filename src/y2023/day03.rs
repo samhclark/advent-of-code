@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 use std::hash::Hash;
 
 static INPUT: &str = include_str!("../../inputs/2023/day03.in");
@@ -161,7 +161,11 @@ fn sum_of_gear_ratios(schematic: &str) -> u64 {
             if c == '*' {
                 if let Some(adjacent_parts) = point_to_adjacent_parts.get(&Point { row, col }) {
                     if adjacent_parts.len() == 2 {
-                    total_gear_ratios += adjacent_parts.iter().map(|part| u64::from(part.value)).reduce(|acc, e| acc * e).unwrap();
+                        total_gear_ratios += adjacent_parts
+                            .iter()
+                            .map(|part| u64::from(part.value))
+                            .reduce(|acc, e| acc * e)
+                            .unwrap();
                     }
                 }
             }
@@ -170,6 +174,7 @@ fn sum_of_gear_ratios(schematic: &str) -> u64 {
     total_gear_ratios
 }
 
+#[allow(clippy::map_entry)]
 fn get_part_adjacency_map(parts: Vec<PartNumber>) -> HashMap<Point, HashSet<PartNumber>> {
     let mut point_to_parts: HashMap<Point, HashSet<PartNumber>> = HashMap::new();
 
@@ -179,14 +184,13 @@ fn get_part_adjacency_map(parts: Vec<PartNumber>) -> HashMap<Point, HashSet<Part
             all_adj_points.extend(adjacent_points(&loc));
         }
         for adj_point in all_adj_points {
-            if !point_to_parts.contains_key(&adj_point) {
+            if point_to_parts.contains_key(&adj_point) {
+                let current_parts = point_to_parts.get_mut(&adj_point).unwrap();
+                current_parts.insert(part.clone());
+            } else {
                 let mut set = HashSet::new();
                 set.insert(part.clone());
                 point_to_parts.insert(adj_point, set);
-            } else {
-                let current_parts = point_to_parts.get_mut(&adj_point).unwrap();
-                current_parts.insert(part.clone());
-                // point_to_parts.insert(adj_point, current_parts.clone());
             }
         }
     }
