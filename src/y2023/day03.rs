@@ -29,11 +29,11 @@ fn sum_of_part_numbers(schematic: &str) -> u64 {
     let adjacency_matrix: HashSet<Point> = build_adjacency_matrix_to_symbols(schematic);
     let parts: Vec<PartNumber> = get_list_of_parts(schematic);
 
-    parts.iter().filter(|part| {
-        part.locations.iter().any(|p| adjacency_matrix.contains(p))
-    })
-    .map(|part| u64::from(part.value))
-    .sum()
+    parts
+        .iter()
+        .filter(|part| part.locations.iter().any(|p| adjacency_matrix.contains(p)))
+        .map(|part| u64::from(part.value))
+        .sum()
 }
 
 fn build_adjacency_matrix_to_symbols(schematic: &str) -> HashSet<Point> {
@@ -42,11 +42,14 @@ fn build_adjacency_matrix_to_symbols(schematic: &str) -> HashSet<Point> {
         for (col_num, c) in row.chars().enumerate() {
             if c.is_ascii_digit() || c == '.' {
                 continue;
-            } else {
-                let points = adjacent_points(&Point { row: row_num, col: col_num });
-                for p in points {
-                    adjacencies.insert(p);
-                }
+            }
+
+            let points = adjacent_points(&Point {
+                row: row_num,
+                col: col_num,
+            });
+            for p in points {
+                adjacencies.insert(p);
             }
         }
     }
@@ -54,39 +57,65 @@ fn build_adjacency_matrix_to_symbols(schematic: &str) -> HashSet<Point> {
     adjacencies
 }
 
-
 fn adjacent_points(point: &Point) -> Vec<Point> {
-    let mut adjacent_points = vec![];
-
     // O O O
     // O * *
     // O * *
-    adjacent_points.push(Point { row: point.row, col: point.col });
-    adjacent_points.push(Point { row: point.row + 1, col: point.col });
-    adjacent_points.push(Point { row: point.row, col: point.col + 1 });
-    adjacent_points.push(Point { row: point.row + 1, col: point.col + 1 });
+    let mut adjacent_points = vec![
+        Point {
+            row: point.row,
+            col: point.col,
+        },
+        Point {
+            row: point.row + 1,
+            col: point.col,
+        },
+        Point {
+            row: point.row,
+            col: point.col + 1,
+        },
+        Point {
+            row: point.row + 1,
+            col: point.col + 1,
+        },
+    ];
 
     // * O O
     // O * *
     // O * *
     if point.row > 0 && point.col > 0 {
-        adjacent_points.push(Point { row: point.row - 1, col: point.col - 1 });
+        adjacent_points.push(Point {
+            row: point.row - 1,
+            col: point.col - 1,
+        });
     }
 
     // * * *
     // O * *
     // O * *
     if point.row > 0 {
-        adjacent_points.push(Point { row: point.row - 1, col: point.col });
-        adjacent_points.push(Point { row: point.row - 1, col: point.col + 1 });
+        adjacent_points.push(Point {
+            row: point.row - 1,
+            col: point.col,
+        });
+        adjacent_points.push(Point {
+            row: point.row - 1,
+            col: point.col + 1,
+        });
     }
 
     // * * *
     // * * *
     // * * *
     if point.col > 0 {
-        adjacent_points.push(Point { row: point.row, col: point.col - 1});
-        adjacent_points.push(Point { row: point.row + 1, col: point.col - 1});
+        adjacent_points.push(Point {
+            row: point.row,
+            col: point.col - 1,
+        });
+        adjacent_points.push(Point {
+            row: point.row + 1,
+            col: point.col - 1,
+        });
     }
 
     adjacent_points
@@ -102,13 +131,19 @@ fn get_list_of_parts(schematic: &str) -> Vec<PartNumber> {
                 current.push(c);
                 part_locations.push(Point { row, col });
             } else if !current.is_empty() {
-                parts.push(PartNumber { value: current.parse().expect("always parses"), locations: part_locations.clone() });
-                    part_locations = vec![];
-                    current = String::new();
+                parts.push(PartNumber {
+                    value: current.parse().expect("always parses"),
+                    locations: part_locations.clone(),
+                });
+                part_locations = vec![];
+                current = String::new();
             }
         }
         if !current.is_empty() {
-            parts.push(PartNumber { value: current.parse().expect("always parses"), locations: part_locations.clone() });
+            parts.push(PartNumber {
+                value: current.parse().expect("always parses"),
+                locations: part_locations.clone(),
+            });
         }
     }
 
@@ -138,6 +173,6 @@ mod test {
     #[test]
     fn test_case_part_2() {
         let input = "";
-assert_eq!(1, 1);
+        assert_eq!(1, 1);
     }
 }
