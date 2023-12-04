@@ -3,3 +3,7 @@
 # "Don't share your inputs
 # https://old.reddit.com/r/adventofcode/comments/r7xsn9/retrieving_input_data_files_outside_of_a_browser/hn499vn/
 /inputs
+
+# sometimes I want to check performance
+flamegraph.svg
+perf.data*
