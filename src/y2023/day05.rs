@@ -1,6 +1,7 @@
 // Day 5: If You Give A Seed A Fertilizer
 
-use std::{collections::HashSet, cmp::{min, max}};
+use crate::aoc::range::Range;
+use std::collections::HashSet;
 
 use itertools::Itertools;
 
@@ -12,31 +13,6 @@ static WATER_TO_LIGHT: &str = include_str!("../../inputs/2023/day05/5-water-to-l
 static LIGHT_TO_TEMP: &str = include_str!("../../inputs/2023/day05/6-light-to-temp.in");
 static TEMP_TO_HUMID: &str = include_str!("../../inputs/2023/day05/7-temp-to-humid.in");
 static HUMID_TO_LOC: &str = include_str!("../../inputs/2023/day05/8-humid-to-loc.in");
-
-#[derive(Debug, Clone, Copy)]
-struct Range {
-    start: u64,
-    end: u64,
-}
-
-impl Range {
-    fn contains(self, value: u64) -> bool {
-        value >= self.start && value < self.end
-    }
-
-    fn remove(self, other: Range) -> Vec<Range> {
-        todo!();
-    }
-
-    fn intersection(self, other: Range) -> Option<Range> {
-        if max(self.start, other.start) > min(self.end, other.end) {
-            None
-        } else {
-            Some(Range { start: max(self.start, other.start), end: min(self.end, other.end) })
-        }
-    }
-}
-
 
 #[allow(dead_code)]
 pub fn part01() {
@@ -113,31 +89,16 @@ fn least_location_range_of_seeds(
         .map(|mut chunk| {
             let start = chunk.next().unwrap().parse::<u64>().unwrap();
             let size = chunk.next().unwrap().parse::<u64>().unwrap();
-            Range { start: start, end: start + size}
+            Range::new(start, start + size).unwrap()
         })
         .collect();
-    println!("seeds {}: {:?}", seeds.len(), seeds);
-
     let soils = map_ranges_by(&seeds, seeds_to_soil);
-    println!("soils({}): {:?}", soils.len(), soils);
-
     let fertilizers = map_ranges_by(&soils, soil_to_fert);
-    println!("fertilizers {}: {:?}", fertilizers.len(), fertilizers);
-
     let water = map_ranges_by(&fertilizers, fert_to_water);
-    println!("water {}: {:?}", water.len(), water);
-
     let light = map_ranges_by(&water, water_to_light);
-    println!("light {}: {:?}", light.len(), light);
-
     let temps = map_ranges_by(&light, light_to_temp);
-    println!("temps {}: {:?}", temps.len(), temps);
-
     let humidities = map_ranges_by(&temps, temp_to_humid);
-    println!("humidities {}: {:?}", humidities.len(), humidities);
-
     let locations = map_ranges_by(&humidities, humid_to_loc);
-    println!("locations {}: {:?}", locations.len(), locations);
 
     locations.iter().map(|r| r.start).min().unwrap()
 }
@@ -149,29 +110,24 @@ fn map_ids_by(ids: &[u64], map: &str) -> Vec<u64> {
         remaining_ids.insert(*id);
     }
 
-    let mut output_ids: Vec<u64> = vec![];
-    output_ids.reserve(ids.len());
+    let mut output_ids: Vec<u64> = Vec::with_capacity(ids.len());
     for line in map.lines() {
-        // println!("parsing {line}...");
         let (dest, src, size) = line
             .splitn(3, ' ')
             .map(|value| value.parse::<u64>().unwrap())
             .collect_tuple()
             .unwrap();
-        // println!("dest: {dest}, src: {src}, size: {size}");
         let mut to_remove: Vec<u64> = vec![];
-        for input_id in remaining_ids.iter() {
+        for input_id in &remaining_ids {
             let range = src..(src + size);
-            // println!("looking if range {:?} contains {input_id}", range);
-            if range.contains(&input_id) {
+            if range.contains(input_id) {
                 output_ids.push(input_id - src + dest);
                 to_remove.push(*input_id);
             }
         }
-        for id in to_remove.iter() {
+        for id in &to_remove {
             remaining_ids.remove(id);
         }
-
     }
     for id in remaining_ids {
         output_ids.push(id);
@@ -180,25 +136,34 @@ fn map_ids_by(ids: &[u64], map: &str) -> Vec<u64> {
 }
 
 fn map_ranges_by(inputs: &[Range], map: &str) -> Vec<Range> {
-    inputs.iter().map(|r| map_range_by(*r, map)).flatten().collect_vec()
+    inputs
+        .iter()
+        .flat_map(|r| map_range_by(*r, map))
+        .collect_vec()
 }
 
 fn map_range_by(input: Range, map: &str) -> Vec<Range> {
     let mut output: Vec<Range> = vec![];
 
+    let mut remaining_inputs: Vec<Range> = vec![input];
     for line in map.lines() {
         let (dest, src, size) = line
             .splitn(3, ' ')
             .map(|value| value.parse::<u64>().unwrap())
             .collect_tuple()
             .unwrap();
-        let src_range = Range { start: src, end: src + size };
-        
+        let src_range = Range::new(src, src + size).unwrap();
+
         if let Some(overlap) = input.intersection(src_range) {
-            output.push(Range { start: overlap.start - src + dest, end: overlap.end - src + dest });
+            output.push(Range::new(overlap.start - src + dest, overlap.end - src + dest).unwrap());
+            remaining_inputs = remaining_inputs
+                .iter()
+                .flat_map(|range| range.difference(overlap))
+                .collect();
         }
     }
-    
+
+    output.extend(remaining_inputs);
     output
 }
 
@@ -241,10 +206,9 @@ mod test {
         let g = "60 56 37
 56 93 4";
 
-        assert_eq!(least_location_range_of_seeds(
-            seeds,
-            a,b,c,d,e,f,g
-
-        ), 47);
+        assert_eq!(
+            least_location_range_of_seeds(seeds, a, b, c, d, e, f, g),
+            46
+        );
     }
 }
