@@ -10,7 +10,7 @@ pub fn part01() {
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = "";
+    let answer = ways_to_win_single_race(INPUT);
     println!("Puzzle answer: {answer}");
 }
 
@@ -47,6 +47,32 @@ fn ways_to_win_score(records: &str) -> u64 {
     score
 }
 
+fn ways_to_win_single_race(records: &str) -> u64 {
+    let mut lines = records.lines();
+    let race_duration: String = lines
+        .next()
+        .unwrap()
+        .chars()
+        .filter(char::is_ascii_digit)
+        .collect();
+    let race_duration: u64 = race_duration.parse().unwrap();
+
+    let distance: String = lines
+        .next()
+        .unwrap()
+        .chars()
+        .filter(char::is_ascii_digit)
+        .collect();
+    let distance: u64 = distance.parse().unwrap();
+
+    (1..race_duration)
+            .filter(|charge_time| {
+                (race_duration - charge_time) * charge_time > distance
+            })
+            .count() as u64
+
+}
+
 #[cfg(test)]
 mod test {
 
@@ -63,6 +89,6 @@ Distance:  9  40  200";
     fn test_case_part_2() {
         let input = "Time:      7  15   30
 Distance:  9  40  200";
-        assert_eq!(30, 30);
+        assert_eq!(ways_to_win_single_race(input), 71503);
     }
 }
