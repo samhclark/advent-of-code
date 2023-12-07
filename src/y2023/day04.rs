@@ -73,6 +73,7 @@ fn how_many_after_playing(scratchcards: &str) -> u64 {
 
     copies.iter().map(|i| u64::from(*i)).sum()
 }
+
 #[cfg(test)]
 mod test {
 
