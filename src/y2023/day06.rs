@@ -1,5 +1,7 @@
 // Day 6: Wait For It
 
+use rayon::prelude::*;
+
 static INPUT: &str = include_str!("../../inputs/2023/day06.in");
 
 #[allow(dead_code)]
@@ -66,6 +68,7 @@ fn ways_to_win_single_race(records: &str) -> u64 {
     let distance: u64 = distance.parse().unwrap();
 
     (1..race_duration)
+            .into_par_iter()
             .filter(|charge_time| {
                 (race_duration - charge_time) * charge_time > distance
             })
