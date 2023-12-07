@@ -10,7 +10,7 @@ pub fn part01() {
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = ways_to_win_single_race(INPUT);
+    let answer = single_race_binary_search(INPUT);
     println!("Puzzle answer: {answer}");
 }
 
@@ -47,7 +47,9 @@ fn ways_to_win_score(records: &str) -> u64 {
     score
 }
 
-fn ways_to_win_single_race(records: &str) -> u64 {
+/// Slightly faster than the direct calculation
+/// Runs in ~0.9ms vs ~1.1ms
+fn single_race_binary_search(records: &str) -> u64 {
     let mut lines = records.lines();
     let race_duration: String = lines
         .next()
@@ -110,6 +112,36 @@ const fn distance_traveled(charge_time: u64, total_time: u64) -> u64 {
     (total_time - charge_time) * charge_time
 }
 
+#[allow(unused)]
+/// Slightly slower than the binary search method
+/// Runs in ~1.1ms vs ~0.9ms
+fn single_race_quadratic(records: &str) -> f64 {
+    let mut lines = records.lines();
+    let race_duration: String = lines
+        .next()
+        .unwrap()
+        .chars()
+        .filter(char::is_ascii_digit)
+        .collect();
+    let race_duration: f64 = race_duration.parse().unwrap();
+
+    let distance: String = lines
+        .next()
+        .unwrap()
+        .chars()
+        .filter(char::is_ascii_digit)
+        .collect();
+    let distance: f64 = distance.parse().unwrap();
+
+    let complicated_term = race_duration
+        .mul_add(race_duration, -(4.0 * distance))
+        .sqrt();
+    let smallest_charge = ((race_duration) - complicated_term) / 2.0;
+    let largest_charge = ((race_duration) + complicated_term) / 2.0;
+
+    largest_charge.floor() - smallest_charge.ceil() + 1.0
+}
+
 #[cfg(test)]
 mod test {
 
@@ -126,6 +158,13 @@ Distance:  9  40  200";
     fn test_case_part_2() {
         let input = "Time:      7  15   30
 Distance:  9  40  200";
-        assert_eq!(ways_to_win_single_race(input), 71503);
+        assert_eq!(single_race_binary_search(input), 71503);
+    }
+
+    #[test]
+    fn test_case_part_2_quadratic() {
+        let input = "Time:      7  15   30
+Distance:  9  40  200";
+        assert_eq!(single_race_quadratic(input), 71503.0);
     }
 }
