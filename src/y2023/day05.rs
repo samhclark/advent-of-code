@@ -173,12 +173,6 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_case_part_1() {
-        let input = "";
-        assert_eq!(13, 13);
-    }
-
-    #[test]
     fn test_case_part_2() {
         let seeds = "79 14 55 13";
         let a = "50 98 2
