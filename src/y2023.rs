@@ -5,6 +5,7 @@ pub mod day04;
 pub mod day05;
 pub mod day06;
 pub mod day07;
+pub mod day08;
 
 #[allow(dead_code)]
 pub fn run_all() {
@@ -22,4 +23,6 @@ pub fn run_all() {
     day06::part02();
     day07::part01();
     day07::part02();
+    day08::part01();
+    day08::part02();
 }
