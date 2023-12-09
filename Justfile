@@ -14,3 +14,7 @@ clippy:
 # Runs unit tests
 test:
 	cargo test --locked
+
+# Benchmarks current release build with hyperfine
+benchmark:
+	hyperfine --warmup 20 -N target/release/advent-of-code
