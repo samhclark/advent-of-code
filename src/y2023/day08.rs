@@ -1,6 +1,7 @@
 // Day 8: Haunted Wasteland
 
-use std::u64;
+use std::{u64, cmp::{max, min}};
+use rayon::prelude::*;
 
 static INPUT: &str = include_str!("../../inputs/2023/day08.in");
 
@@ -14,7 +15,7 @@ pub fn part01() {
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = "";
+    let answer = number_of_steps_for_ghosts(INPUT);
     println!("Puzzle answer: {answer}");
 }
 
@@ -51,6 +52,150 @@ fn number_of_steps(input: &str) -> u64 {
         steps += 1;
     }
     steps
+}
+
+fn number_of_steps_for_ghosts(input: &str) -> u64 {
+    let (instructions, map_str) = input.split_once("\n\n").unwrap();
+    let mut map: [Pair; 26 * 26 * 26] = [(0, 0); 26 * 26 * 26];
+    let mut positions: Vec<usize> = Vec::with_capacity(6); // cheating a little because I know my input has 6
+    for line in map_str.lines() {
+        let (node, leaves) = line.split_once(" = ").unwrap();
+        let node_idx = index_from_node_id(node);
+        let (left, right) = leaves
+            .strip_prefix('(')
+            .unwrap()
+            .strip_suffix(')')
+            .unwrap()
+            .split_once(", ")
+            .unwrap();
+        map[node_idx] = (index_from_node_id(left), index_from_node_id(right));
+        if node_idx % 26 == 0 {
+            // is a start point
+            positions.push(node_idx);
+        }
+    }
+    let map = map; // immutable again
+
+    // Walk the graph -- takes too long
+    // let mut steps: u64 = 0;
+    // println!("Number of starting positions: {}", positions.len());
+    // for dir in instructions.chars().cycle() {
+    //     if positions.iter().all(|p| p % 26 == 25) {
+    //         break;
+    //     }
+    //     if steps == u64::MAX.into() {
+    //         break;
+    //     }
+    //     positions = positions
+    //         .iter()
+    //         .map(|pos| match dir {
+    //             'L' => map[*pos].0,
+    //             'R' => map[*pos].1,
+    //             _ => unreachable!(),
+    //         })
+    //         .collect();
+
+    //     steps += 1;
+    // }
+    // steps
+
+    println!("starting positions: {:?}", positions);
+    let cycle_lengths: Vec<u64> = positions.iter().map(|pos| analyze_cycles(*pos, &instructions, &map)).collect();
+    println!("cycle lenths are: {:?}", cycle_lengths);
+    cycle_lengths.iter().fold(1, |acc, e| lcm(acc, *e))
+
+}
+struct Cycle {
+    start: usize,
+    length: u64,
+}
+
+fn analyze_cycles(start: usize, instructions: &str, map: &[Pair]) -> u64 {
+    // an array where the value at each index is the step number when that value was last seen
+    // AND the exact same step in the sequence of instructions
+    let mut visited: [(u64, u16); 26 * 26 * 26] = [(u64::MAX, u16::MAX); 26 * 26 * 26];
+    
+    
+    let mut first_z_at: usize = 0;
+    let mut cycle_starts_at: u64 = 0;
+    let mut cycle_length: u64 = 0;
+    let mut num_z_in_cycle: u64 = 0;
+
+    let mut current_node: usize = start;
+    let instructions_len = instructions.len() as u16;
+    for (step, dir) in instructions.chars().cycle().enumerate() {
+        // limit the number of total steps
+        if step == u32::MAX as usize {
+            println!("|{start}| Hit max. Exiting");
+            return 0;
+            // panic!();
+        }
+
+        let instruction_index: u16 = (step % instructions_len as usize) as u16;
+
+        // look for the very first exit node
+        if current_node % 26 == 25 && first_z_at == 0 {
+            println!("|{start}| found first z at {step}");
+            first_z_at = step;
+        }
+
+        // check if this node has been visited before
+        let (prev_step, prev_instr) = visited[current_node];
+        if prev_step != u64::MAX && prev_instr == instruction_index && cycle_starts_at == 0 { // cycle detected -- first time
+            println!("|{start}| found first cycle at {step}");
+            println!("|{start}| prev_step: {prev_step}; prev_instr: {prev_instr}; instruction_index: {instruction_index}; cycle_starts_at: {cycle_starts_at}");
+            cycle_starts_at = prev_step;
+            cycle_length = step as u64 - prev_step;
+        }
+
+        // exit on the second time through the cycle
+        if cycle_length != 0 && prev_step + cycle_length == step as u64 {
+            println!("|{start}| Found second cycle as {current_node}. Exiting...");
+            println!("|{start}| First Z at {first_z_at}");
+            println!("|{start}| Cycle starts at step {cycle_starts_at}");
+            println!("|{start}| Cycle length is {cycle_length}");
+            println!("|{start}| Count of Z in cycle: {num_z_in_cycle}");
+            return cycle_length;
+        }
+        
+        // while in a cycle, count the number of exits
+        if cycle_starts_at != 0 && current_node % 26 == 25 {
+            println!("|{start}| Found another z in cycle at {current_node}");
+            num_z_in_cycle += 1;
+        }
+        
+        visited[current_node] = (step as u64, instruction_index);
+        match dir {
+            'L' => current_node = map[current_node].0,
+            'R' => current_node = map[current_node].1,
+            _ => unreachable!(),
+        }
+        
+    }
+    println!("|{start}| Exiting after for loop");
+    0
+    // unreachable!()
+}
+
+fn lcm(a: u64, b: u64) -> u64 {
+    a * (b / gcd(a, b))
+}
+
+fn gcd(a: u64, b: u64) -> u64 {
+    // ripped from https://www.hackertouch.com/least-common-multiple-in-rust.html 
+    // because the wikipedia page was so damn dense
+    let mut max = max(a, b);
+    let mut min = min(a, b);
+
+    loop {
+        let res = max % min;
+        if res == 0 {
+            return min;
+        }
+
+        max = min;
+        min = res;
+    }
 }
 
 /// AAA -> 0
@@ -91,5 +236,30 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)";
         assert_eq!(number_of_steps(input), 6);
+    }
+
+    #[test]
+    fn test_case_part_2() {
+        let input = "LR
+
+AAA = (AAB, XXX)
+AAB = (XXX, AAZ)
+AAZ = (AAB, XXX)
+BBA = (BBB, XXX)
+BBB = (BBC, BBC)
+BBC = (BBZ, BBZ)
+BBZ = (BBB, BBB)
+XXX = (XXX, XXX)";
+        assert_eq!(number_of_steps_for_ghosts(input), 6);
+    }
+
+    #[test]
+    fn mod_26_works() {
+        assert_eq!(index_from_node_id("AAZ") % 26, 25);
+        assert_eq!(index_from_node_id("ABZ") % 26, 25);
+        assert_eq!(index_from_node_id("BAZ") % 26, 25);
+        assert_eq!(index_from_node_id("AZZ") % 26, 25);
+        assert_eq!(index_from_node_id("ZAZ") % 26, 25);
+        assert_eq!(index_from_node_id("ZZZ") % 26, 25);
     }
 }
