@@ -4,5 +4,5 @@ mod y2022;
 mod y2023;
 
 fn main() {
-    y2023::day09::part01();
+    y2023::day10::part01();
 }
