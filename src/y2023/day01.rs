@@ -1,5 +1,3 @@
-// use itertools::Itertools;
-
 use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2023/day01.in");
