@@ -2,6 +2,7 @@ use std::{cmp::max, num::ParseIntError, str::FromStr};
 
 static INPUT: &str = include_str!("../../inputs/2023/day02.in");
 
+#[allow(clippy::struct_field_names)]
 #[derive(Debug, Clone, Copy)]
 struct Handful {
     red_qty: u64,

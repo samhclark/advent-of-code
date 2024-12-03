@@ -7,7 +7,7 @@ pub struct PuzzleAnswer {
 
 impl From<&str> for PuzzleAnswer {
     fn from(s: &str) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: s.trim().to_string(),
         }
     }
@@ -15,7 +15,7 @@ impl From<&str> for PuzzleAnswer {
 
 impl From<String> for PuzzleAnswer {
     fn from(s: String) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: s.trim().to_string(),
         }
     }
@@ -23,7 +23,7 @@ impl From<String> for PuzzleAnswer {
 
 impl From<i32> for PuzzleAnswer {
     fn from(value: i32) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: value.to_string(),
         }
     }
@@ -31,7 +31,7 @@ impl From<i32> for PuzzleAnswer {
 
 impl From<i64> for PuzzleAnswer {
     fn from(value: i64) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: value.to_string(),
         }
     }
@@ -39,7 +39,7 @@ impl From<i64> for PuzzleAnswer {
 
 impl From<u32> for PuzzleAnswer {
     fn from(value: u32) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: value.to_string(),
         }
     }
@@ -47,7 +47,7 @@ impl From<u32> for PuzzleAnswer {
 
 impl From<usize> for PuzzleAnswer {
     fn from(value: usize) -> Self {
-        PuzzleAnswer {
+        Self {
             answer: value.to_string(),
         }
     }

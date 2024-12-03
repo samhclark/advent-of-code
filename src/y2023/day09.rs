@@ -70,7 +70,7 @@ fn predict_next_value(values: &[i64]) -> i64 {
         last_val_in_prev_layer = prediction_for_layer;
     }
 
-    *work.get(0).unwrap().last().unwrap()
+    *work.first().unwrap().last().unwrap()
 }
 
 fn extrapolate_previous_value(values: &[i64]) -> i64 {
@@ -100,7 +100,7 @@ fn extrapolate_previous_value(values: &[i64]) -> i64 {
         first_val_in_prev_layer = extrapolation_for_layer;
     }
 
-    *work.get(0).unwrap().first().unwrap()
+    *work.first().unwrap().first().unwrap()
 }
 
 fn next_layer(values: &[i64]) -> Vec<i64> {

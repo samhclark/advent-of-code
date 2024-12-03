@@ -55,7 +55,7 @@ fn calculate_oxygen_generator_rating(input: &str) -> Result<u64, Box<dyn Error>>
     for i in 0..12 {
         filtered = check_and_filter_oxygen_readings(&filtered, i);
         if filtered.len() == 1 {
-            let result_string = filtered.get(0).unwrap();
+            let result_string = filtered.first().unwrap();
             result = u64::from_str_radix(result_string, 2)?;
             break;
         }
@@ -99,7 +99,7 @@ fn calculate_co2_scrubber_rating(input: &str) -> Result<u64, Box<dyn Error>> {
     for i in 0..12 {
         filtered = check_and_filter_c02_readings(&filtered, i);
         if filtered.len() == 1 {
-            let result_string = filtered.get(0).unwrap();
+            let result_string = filtered.first().unwrap();
             result = u64::from_str_radix(result_string, 2)?;
             break;
         }

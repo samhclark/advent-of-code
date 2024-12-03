@@ -32,7 +32,7 @@ fn total_distance(input: &str) -> i64 {
 
     let mut distance: i64 = 0;
     for (l, r) in zip(left_ids, right_ids) {
-        distance += (l - r).abs() as i64
+        distance += i64::from((l - r).abs());
     }
 
     distance
@@ -55,7 +55,7 @@ fn similarity_score(input: &str) -> i64 {
     let mut score: i64 = 0;
     for location_id in left_ids {
         score +=
-            i64::from(location_id * u32::from(count_map[usize::try_from(location_id).unwrap()]))
+            i64::from(location_id * u32::from(count_map[usize::try_from(location_id).unwrap()]));
     }
 
     score

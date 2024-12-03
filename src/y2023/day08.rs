@@ -1,9 +1,6 @@
 // Day 8: Haunted Wasteland
 
-use std::{
-    cmp::{max, min},
-    u64,
-};
+use std::cmp::{max, min};
 
 static INPUT: &str = include_str!("../../inputs/2023/day08.in");
 

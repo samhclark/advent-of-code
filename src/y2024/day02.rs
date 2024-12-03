@@ -37,7 +37,7 @@ fn how_many_reports_are_safe(input: &str, is_safe: fn(&[u32]) -> bool) -> u32 {
             .map(|it| it.parse().unwrap())
             .collect();
         if is_safe(&report) {
-            count += 1
+            count += 1;
         }
     }
     count
@@ -46,16 +46,17 @@ fn how_many_reports_are_safe(input: &str, is_safe: fn(&[u32]) -> bool) -> u32 {
 fn is_report_safe_with_damper(report: &[u32]) -> bool {
     if is_report_safe(report) {
         return true;
-    } else {
-        let length = report.len();
-        for i in 0..length {
-            let mut report_copy = report.to_owned().clone();
-            report_copy.remove(i);
-            if is_report_safe(&report_copy) {
-                return true;
-            }
+    }
+
+    let length = report.len();
+    for i in 0..length {
+        let mut report_copy = report.to_owned().clone();
+        report_copy.remove(i);
+        if is_report_safe(&report_copy) {
+            return true;
         }
     }
+
     false
 }
 
@@ -65,13 +66,11 @@ fn is_report_safe(report: &[u32]) -> bool {
     for (a, b) in report.iter().tuple_windows() {
         if a < b && (b - a) < 4 && (b - a) >= 1 {
             continue;
-        } else {
-            increasing = false;
-            break;
         }
+        increasing = false;
+        break;
     }
     if increasing {
-        println!("Safe: {:?}", report);
         return true;
     }
 
@@ -79,9 +78,8 @@ fn is_report_safe(report: &[u32]) -> bool {
     for (a, b) in report.iter().tuple_windows() {
         if a > b && (a - b) < 4 && (a - b) >= 1 {
             continue;
-        } else {
-            return false;
         }
+        return false;
     }
     true
 }
