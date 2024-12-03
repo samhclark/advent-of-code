@@ -18,8 +18,8 @@ pub fn part02() {
 }
 
 fn total_distance(input: &str) -> i64 {
-    let mut left_ids: Vec<i32> = vec!();
-    let mut right_ids: Vec<i32> = vec!();
+    let mut left_ids: Vec<i32> = vec![];
+    let mut right_ids: Vec<i32> = vec![];
 
     for line in input.lines() {
         let (l, r) = line.split_once("   ").expect("Each line contains 3 spaces");
@@ -31,7 +31,7 @@ fn total_distance(input: &str) -> i64 {
     right_ids.sort_unstable();
 
     let mut distance: i64 = 0;
-    for (l,r) in zip(left_ids, right_ids) {
+    for (l, r) in zip(left_ids, right_ids) {
         distance += (l - r).abs() as i64
     }
 
@@ -40,21 +40,22 @@ fn total_distance(input: &str) -> i64 {
 
 fn similarity_score(input: &str) -> i64 {
     let mut count_map = [0u16; 100_000];
-    
-    let mut left_ids: Vec<u32> = vec!();
+
+    let mut left_ids: Vec<u32> = vec![];
 
     for line in input.lines() {
         let (l, r) = line.split_once("   ").expect("Each line contains 3 spaces");
         left_ids.push(l.parse::<u32>().expect("Each location id is a digit"));
-        
+
         let right = r.parse::<usize>().expect("Each location id is a digit");
         assert!(right < 100_000);
-        count_map[right] += 1; 
+        count_map[right] += 1;
     }
 
     let mut score: i64 = 0;
     for location_id in left_ids {
-        score += i64::from(location_id * u32::from(count_map[usize::try_from(location_id).unwrap()]))
+        score +=
+            i64::from(location_id * u32::from(count_map[usize::try_from(location_id).unwrap()]))
     }
 
     score
