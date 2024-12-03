@@ -29,60 +29,55 @@ fn private_part2(input: &str) -> PuzzleAnswer {
     PuzzleAnswer::from(how_many_reports_are_safe(input, is_report_safe_with_damper))
 }
 
-fn how_many_reports_are_safe(input: &str, is_safe: fn(&[u32]) -> bool) -> u32 {
-    let mut count: u32 = 0;
-    for line in input.lines() {
-        let report: Vec<u32> = line
-            .split_ascii_whitespace()
-            .map(|it| it.parse().unwrap())
-            .collect();
-        if is_safe(&report) {
-            count += 1;
-        }
-    }
-    count
+fn how_many_reports_are_safe(input: &str, is_safe: fn(&[u32]) -> bool) -> usize {
+    input
+        .lines()
+        .map(|line| {
+            line.split_ascii_whitespace()
+                .map(|it| it.parse().unwrap())
+                .collect::<Vec<u32>>()
+        })
+        .filter(|report| is_safe(report))
+        .count()
 }
 
 fn is_report_safe_with_damper(report: &[u32]) -> bool {
-    if is_report_safe(report) {
-        return true;
-    }
+    is_report_safe(report)
+        || report.iter().enumerate().any(|(i, _)| {
+            let mut report_copy = report.to_owned();
+            report_copy.remove(i);
+            is_report_safe(&report_copy)
+        })
+}
 
-    let length = report.len();
-    for i in 0..length {
-        let mut report_copy = report.to_owned().clone();
-        report_copy.remove(i);
-        if is_report_safe(&report_copy) {
-            return true;
-        }
-    }
-
-    false
+#[derive(PartialEq, Eq)]
+enum Direction {
+    Decreasing,
+    Increasing,
+    Invalid,
 }
 
 fn is_report_safe(report: &[u32]) -> bool {
-    // Check increasing
-    let mut increasing = true;
-    for (a, b) in report.iter().tuple_windows() {
-        if a < b && (b - a) < 4 && (b - a) >= 1 {
-            continue;
-        }
-        increasing = false;
-        break;
-    }
-    if increasing {
-        return true;
-    }
+    let directions = report
+        .iter()
+        .tuple_windows()
+        .map(|(a, b)| {
+            let diff = a.abs_diff(*b);
+            if (1..4).contains(&diff) {
+                if b > a {
+                    Direction::Increasing
+                } else {
+                    Direction::Decreasing
+                }
+            } else {
+                Direction::Invalid
+            }
+        })
+        .collect::<Vec<Direction>>();
 
-    // Check decreasing
-    for (a, b) in report.iter().tuple_windows() {
-        if a > b && (a - b) < 4 && (a - b) >= 1 {
-            continue;
-        }
-        return false;
-    }
-    true
-}
+    return directions.iter().all(|it| *it == Direction::Increasing)
+        || directions.iter().all(|it| *it == Direction::Decreasing);
+} 
 
 #[cfg(test)]
 mod test {
