@@ -1,7 +1,7 @@
 // Day 10: Pipe Maze
 
-use itertools::Itertools;
-use rayon::prelude::*;
+// use itertools::Itertools;
+// use rayon::prelude::*;
 
 static INPUT: &str = include_str!("../../inputs/2023/day10.in");
 

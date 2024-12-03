@@ -47,7 +47,7 @@ fn is_report_safe_with_damper(report: &[u32]) -> bool {
          return true;
     } else {
         let length = report.len();
-        for i in (0..length) { 
+        for i in 0..length { 
             let mut report_copy = report.to_owned().clone();
             report_copy.remove(i);
             if is_report_safe(&report_copy) {

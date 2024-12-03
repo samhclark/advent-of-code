@@ -59,6 +59,6 @@ impl Display for PuzzleAnswer {
     }
 }
 
-pub struct Day {
-    pub input: String
-}
+// pub struct Day {
+//     pub input: String
+// }
