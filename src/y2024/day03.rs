@@ -8,61 +8,60 @@ static INPUT: &str = include_str!("../../inputs/2024/day03.in");
 
 #[allow(dead_code)]
 pub fn part01() {
-    let answer = private_part1(INPUT);
+    let answer = solve_part1(INPUT);
     println!("{answer}");
 }
 
 #[allow(dead_code)]
 pub fn part02() {
-    let answer = private_part2(INPUT);
+    let answer = solve_part2(INPUT);
     println!("{answer}");
 }
 
-fn private_part1(input: &str) -> PuzzleAnswer {
+fn solve_part1(input: &str) -> PuzzleAnswer {
     PuzzleAnswer::from(fix_mul(input))
 }
 
-fn private_part2(input: &str) -> PuzzleAnswer {
+fn solve_part2(input: &str) -> PuzzleAnswer {
     PuzzleAnswer::from(dos_and_donts(input))
 }
 
+fn extract_mul_values(capture: &str) -> (u64, u64) {
+    capture
+        .strip_prefix("mul(")
+        .and_then(|s| s.strip_suffix(")"))
+        .and_then(|s| s.split_once(','))
+        .map(|(a, b)| (a.parse::<u64>().unwrap(), b.parse::<u64>().unwrap()))
+        .unwrap()
+}
+
 fn fix_mul(input: &str) -> u64 {
-    let mut total: u64 = 0;
-    let re = Regex::new(r"(mul\(\d+,\d+\))").unwrap();
-    for line in input.lines() {
-        for (_, [mul]) in re.captures_iter(line).map(|c| c.extract()) {
-            let (a, b) = mul
-                .strip_prefix("mul(")
-                .unwrap()
-                .strip_suffix(")")
-                .unwrap()
-                .split_once(',')
-                .unwrap();
-            total += a.parse::<u64>().unwrap() * b.parse::<u64>().unwrap();
-        }
-    }
-    total
+    let re = Regex::new(r"mul\(\d+,\d+\)").unwrap();
+
+    input
+        .lines()
+        .flat_map(|line| re.captures_iter(line))
+        .map(|cap| extract_mul_values(&cap[0]))
+        .map(|(a, b)| a * b)
+        .sum()
 }
 
 fn dos_and_donts(input: &str) -> u64 {
-    let mut mul_enabled = true;
-    let mut total: u64 = 0;
     let re = Regex::new(r"(mul\(\d+,\d+\))|(do\(\))|(don't\(\))").unwrap();
+
+    let mut total = 0;
+    let mut mul_enabled = true;
+
     for line in input.lines() {
-        for (_, [cap]) in re.captures_iter(line).map(|c| c.extract()) {
-            if cap == "do()" {
-                mul_enabled = true;
-            } else if cap == "don't()" {
-                mul_enabled = false;
-            } else if mul_enabled {
-                let (a, b) = cap
-                    .strip_prefix("mul(")
-                    .unwrap()
-                    .strip_suffix(")")
-                    .unwrap()
-                    .split_once(',')
-                    .unwrap();
-                total += a.parse::<u64>().unwrap() * b.parse::<u64>().unwrap();
+        for cap in re.captures_iter(line) {
+            match &cap[0] {
+                "do()" => mul_enabled = true,
+                "don't()" => mul_enabled = false,
+                mul_cap if mul_enabled => {
+                    let (a, b) = extract_mul_values(mul_cap);
+                    total += a * b;
+                }
+                _ => {}
             }
         }
     }
