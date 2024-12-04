@@ -23,7 +23,7 @@ fn private_part1(input: &str) -> PuzzleAnswer {
 }
 
 fn private_part2(input: &str) -> PuzzleAnswer {
-    PuzzleAnswer::from(0)
+    PuzzleAnswer::from(dos_and_donts(input))
 }
 
 fn fix_mul(input: &str) -> u64 {
@@ -44,6 +44,31 @@ fn fix_mul(input: &str) -> u64 {
     total
 }
 
+fn dos_and_donts(input: &str) -> u64 {
+    let mut mul_enabled = true;
+    let mut total: u64 = 0;
+    let re = Regex::new(r"(mul\(\d+,\d+\))|(do\(\))|(don't\(\))").unwrap();
+    for line in input.lines() {
+        for (_, [cap]) in re.captures_iter(line).map(|c| c.extract()) {
+            if cap == "do()" {
+                mul_enabled = true;
+            } else if cap == "don't()" {
+                mul_enabled = false;
+            } else if mul_enabled {
+                let (a, b) = cap
+                    .strip_prefix("mul(")
+                    .unwrap()
+                    .strip_suffix(")")
+                    .unwrap()
+                    .split_once(',')
+                    .unwrap();
+                total += a.parse::<u64>().unwrap() * b.parse::<u64>().unwrap();
+            }
+        }
+    }
+    total
+}
+
 #[cfg(test)]
 mod test {
 
@@ -58,8 +83,8 @@ mod test {
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
+        let input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
 
-        assert_eq!(2, 2);
+        assert_eq!(dos_and_donts(input), 48);
     }
 }
