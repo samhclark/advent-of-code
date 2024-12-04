@@ -45,6 +45,14 @@ impl From<u32> for PuzzleAnswer {
     }
 }
 
+impl From<u64> for PuzzleAnswer {
+    fn from(value: u64) -> Self {
+        Self {
+            answer: value.to_string(),
+        }
+    }
+}
+
 impl From<usize> for PuzzleAnswer {
     fn from(value: usize) -> Self {
         Self {

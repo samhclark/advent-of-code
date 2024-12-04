@@ -77,7 +77,7 @@ fn is_report_safe(report: &[u32]) -> bool {
 
     return directions.iter().all(|it| *it == Direction::Increasing)
         || directions.iter().all(|it| *it == Direction::Decreasing);
-} 
+}
 
 #[cfg(test)]
 mod test {
