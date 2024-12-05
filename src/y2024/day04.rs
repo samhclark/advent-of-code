@@ -1,4 +1,7 @@
+// Day 4: Ceres Search
+
 use crate::aoc::util::PuzzleAnswer;
+use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2024/day04.in");
 
@@ -15,11 +18,80 @@ pub fn part02() {
 }
 
 fn solve_part1(input: &str) -> PuzzleAnswer {
-    PuzzleAnswer::from(0)
+    PuzzleAnswer::from(count_xmas(input))
 }
 
 fn solve_part2(input: &str) -> PuzzleAnswer {
     PuzzleAnswer::from(0)
+}
+
+fn count_xmas(input: &str) -> usize { 
+    let xmas = "XMAS";
+    let xmas_rev = "SAMX";
+
+    let num_lines = input.lines().count();
+    let mut rotated_90: Vec<String> = vec!(String::from(""); num_lines);
+    rotated_90.reserve(input.lines().next().unwrap().len());
+    
+    let mut count = 0;
+    for line in input.lines() {
+        count += line.matches(xmas).count();
+        count += line.matches(xmas_rev).count();
+
+        for  (i, ch) in line.chars().enumerate() {
+            rotated_90[num_lines - 1 - i].push(ch);
+        }
+    }
+
+    // println!("counted: {count}");
+
+    // again with rotated input
+    for line in rotated_90.iter() {
+        count += line.matches(xmas).count();
+        count += line.matches(xmas_rev).count();
+    }
+
+    // println!("Rotated 90:");
+    // println!("{}", rotated_90.join("\n"));
+    // println!("counted: {count}");
+
+    // rotate +/- 45 degrees
+    let mut rotated_left_45: Vec<String> = vec!(String::from(""); num_lines * 2);
+    let mut rotated_right_45: Vec<String> = vec!(String::from(""); num_lines * 2);
+    
+    for (i, line) in input.lines().enumerate() {
+        let input_line_len = line.len();
+        for (j, ch) in line.chars().enumerate() {
+            rotated_left_45[input_line_len - 1 - j + i].push(ch)
+        }
+    }
+
+    for (i, line) in rotated_90.iter().enumerate() {
+        let input_line_len = line.len();
+        for (j, ch) in line.chars().enumerate() {
+            rotated_right_45[input_line_len - 1 - j + i].push(ch)
+        }
+    }
+
+    for line in rotated_left_45.iter() {
+        count += line.matches(xmas).count();
+        count += line.matches(xmas_rev).count();
+    }
+    
+    // println!("Rotated left 45:");
+    // println!("{}", rotated_left_45.join("\n"));
+    // println!("counted: {count}");
+
+    for line in rotated_right_45.iter() {
+        count += line.matches(xmas).count();
+        count += line.matches(xmas_rev).count();
+    }
+    
+    // println!("Rotated right 45:");
+    // println!("{}", rotated_right_45.join("\n"));
+    // println!("counted: {count}");
+
+    count
 }
 
 #[cfg(test)]
@@ -28,10 +100,28 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_case_part_1() {
-        let input = "";
+    fn test_case_part_0() {
+        let input = "ABC
+DEF
+GHI";
 
-        assert_eq!(1, 1);
+        assert_eq!(count_xmas(input), 0);
+    }
+
+    #[test]
+    fn test_case_part_1() {
+        let input = "MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX";
+
+        assert_eq!(count_xmas(input), 18);
     }
 
     #[test]
