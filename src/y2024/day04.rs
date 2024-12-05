@@ -1,7 +1,6 @@
 // Day 4: Ceres Search
 
 use crate::aoc::util::PuzzleAnswer;
-use itertools::Itertools;
 
 static INPUT: &str = include_str!("../../inputs/2024/day04.in");
 
@@ -25,20 +24,20 @@ fn solve_part2(input: &str) -> PuzzleAnswer {
     PuzzleAnswer::from(count_x_mas(input))
 }
 
-fn count_xmas(input: &str) -> usize { 
+fn count_xmas(input: &str) -> usize {
     let xmas = "XMAS";
     let xmas_rev = "SAMX";
 
     let num_lines = input.lines().count();
-    let mut rotated_90: Vec<String> = vec!(String::from(""); num_lines);
+    let mut rotated_90: Vec<String> = vec![String::new(); num_lines];
     rotated_90.reserve(input.lines().next().unwrap().len());
-    
+
     let mut count = 0;
     for line in input.lines() {
         count += line.matches(xmas).count();
         count += line.matches(xmas_rev).count();
 
-        for  (i, ch) in line.chars().enumerate() {
+        for (i, ch) in line.chars().enumerate() {
             rotated_90[num_lines - 1 - i].push(ch);
         }
     }
@@ -46,7 +45,7 @@ fn count_xmas(input: &str) -> usize {
     // println!("counted: {count}");
 
     // again with rotated input
-    for line in rotated_90.iter() {
+    for line in &rotated_90 {
         count += line.matches(xmas).count();
         count += line.matches(xmas_rev).count();
     }
@@ -56,37 +55,37 @@ fn count_xmas(input: &str) -> usize {
     // println!("counted: {count}");
 
     // rotate +/- 45 degrees
-    let mut rotated_left_45: Vec<String> = vec!(String::from(""); num_lines * 2);
-    let mut rotated_right_45: Vec<String> = vec!(String::from(""); num_lines * 2);
-    
+    let mut rotated_left_45: Vec<String> = vec![String::new(); num_lines * 2];
+    let mut rotated_right_45: Vec<String> = vec![String::new(); num_lines * 2];
+
     for (i, line) in input.lines().enumerate() {
         let input_line_len = line.len();
         for (j, ch) in line.chars().enumerate() {
-            rotated_left_45[input_line_len - 1 - j + i].push(ch)
+            rotated_left_45[input_line_len - 1 - j + i].push(ch);
         }
     }
 
     for (i, line) in rotated_90.iter().enumerate() {
         let input_line_len = line.len();
         for (j, ch) in line.chars().enumerate() {
-            rotated_right_45[input_line_len - 1 - j + i].push(ch)
+            rotated_right_45[input_line_len - 1 - j + i].push(ch);
         }
     }
 
-    for line in rotated_left_45.iter() {
+    for line in &rotated_left_45 {
         count += line.matches(xmas).count();
         count += line.matches(xmas_rev).count();
     }
-    
+
     // println!("Rotated left 45:");
     // println!("{}", rotated_left_45.join("\n"));
     // println!("counted: {count}");
 
-    for line in rotated_right_45.iter() {
+    for line in &rotated_right_45 {
         count += line.matches(xmas).count();
         count += line.matches(xmas_rev).count();
     }
-    
+
     // println!("Rotated right 45:");
     // println!("{}", rotated_right_45.join("\n"));
     // println!("counted: {count}");
@@ -99,9 +98,8 @@ fn count_x_mas(input: &str) -> usize {
 
     let grid: Vec<Vec<char>> = input
         .lines()
-        .map(|l|
-            l.chars().collect::<Vec<char>>()
-        ).collect();
+        .map(|l| l.chars().collect::<Vec<char>>())
+        .collect();
 
     for (i, line) in grid.iter().enumerate() {
         if i == 0 || i == grid.len() - 1 {
@@ -112,37 +110,36 @@ fn count_x_mas(input: &str) -> usize {
                 continue;
             }
 
-            if ch == 'A' {
-                if grid.get(i-1).unwrap().get(j-1).unwrap() == &'M'
-                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'M'
-                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'S'
-                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'S' 
-                {
-                    count += 1
-                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'S'
-                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'M'
-                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'S'
-                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'M' 
-                {
-                    count += 1
-                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'M'
-                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'S'
-                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'M'
-                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'S' 
-                {
-                    count += 1
-                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'S'
-                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'S'
-                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'M'
-                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'M' 
-                {
-                    count += 1
-                }
+            if ch == 'A'
+                && is_x_mas(
+                    *grid.get(i - 1).unwrap().get(j - 1).unwrap(),
+                    *grid.get(i - 1).unwrap().get(j + 1).unwrap(),
+                    *grid.get(i + 1).unwrap().get(j - 1).unwrap(),
+                    *grid.get(i + 1).unwrap().get(j + 1).unwrap(),
+                )
+            {
+                count += 1;
             }
         }
     }
-    
+
     count
+}
+
+const fn is_x_mas(up_left: char, up_right: char, down_left: char, down_right: char) -> bool {
+    let diag_1 = match up_left {
+        'S' => down_right == 'M',
+        'M' => down_right == 'S',
+        _ => false,
+    };
+
+    let diag_2 = match up_right {
+        'S' => down_left == 'M',
+        'M' => down_left == 'S',
+        _ => false,
+    };
+
+    diag_1 && diag_2
 }
 
 #[cfg(test)]
