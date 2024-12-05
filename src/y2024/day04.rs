@@ -22,7 +22,7 @@ fn solve_part1(input: &str) -> PuzzleAnswer {
 }
 
 fn solve_part2(input: &str) -> PuzzleAnswer {
-    PuzzleAnswer::from(0)
+    PuzzleAnswer::from(count_x_mas(input))
 }
 
 fn count_xmas(input: &str) -> usize { 
@@ -94,6 +94,57 @@ fn count_xmas(input: &str) -> usize {
     count
 }
 
+fn count_x_mas(input: &str) -> usize {
+    let mut count = 0;
+
+    let grid: Vec<Vec<char>> = input
+        .lines()
+        .map(|l|
+            l.chars().collect::<Vec<char>>()
+        ).collect();
+
+    for (i, line) in grid.iter().enumerate() {
+        if i == 0 || i == grid.len() - 1 {
+            continue;
+        }
+        for (j, &ch) in line.iter().enumerate() {
+            if j == 0 || j == line.len() - 1 {
+                continue;
+            }
+
+            if ch == 'A' {
+                if grid.get(i-1).unwrap().get(j-1).unwrap() == &'M'
+                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'M'
+                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'S'
+                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'S' 
+                {
+                    count += 1
+                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'S'
+                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'M'
+                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'S'
+                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'M' 
+                {
+                    count += 1
+                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'M'
+                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'S'
+                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'M'
+                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'S' 
+                {
+                    count += 1
+                } else if grid.get(i-1).unwrap().get(j-1).unwrap() == &'S'
+                    && grid.get(i-1).unwrap().get(j+1).unwrap() == &'S'
+                    && grid.get(i+1).unwrap().get(j-1).unwrap() == &'M'
+                    && grid.get(i+1).unwrap().get(j+1).unwrap() == &'M' 
+                {
+                    count += 1
+                }
+            }
+        }
+    }
+    
+    count
+}
+
 #[cfg(test)]
 mod test {
 
@@ -126,8 +177,17 @@ MXMXAXMASX";
 
     #[test]
     fn test_case_part_2() {
-        let input = "";
+        let input = "MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX";
 
-        assert_eq!(2, 2);
+        assert_eq!(count_x_mas(input), 9);
     }
 }
